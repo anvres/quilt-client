@@ -92,6 +92,7 @@ import tech.quilt.client.modules.impl.render.SwingAnimation;
 import tech.quilt.client.modules.impl.render.TargetESP;
 import tech.quilt.client.modules.impl.render.ViewModel;
 import tech.quilt.client.modules.impl.render.WorldTime;
+import tech.quilt.client.modules.impl.render.CameraClip;
 import tech.quilt.client.screens.menu.MenuScreen;
 import tech.quilt.utility.component.RotationComponent;
 import tech.quilt.utility.game.player.rotation.Rotation;
@@ -167,6 +168,7 @@ public final class ModuleManager implements IMinecraft {
        registerModule(Arrows.INSTANCE);
        registerModule(ExtraTab.INSTANCE);
        registerModule(SeeInvisibles.INSTANCE);
+       registerModule(CameraClip.INSTANCE);
     }
 
     private void registerPlayer() {

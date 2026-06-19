@@ -1,5 +1,3 @@
-cd /home/anvres/Изображения/quilt
-./gradlew runClient
 package tech.quilt.utility.mixin.client;
 
 import com.darkmagician6.eventapi.EventManager;
