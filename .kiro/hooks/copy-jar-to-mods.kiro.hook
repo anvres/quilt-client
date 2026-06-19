@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Copy jar to mods",
+  "description": "После сборки копирует quilt-0.1-recode.jar в run/mods/quilt.jar",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "cp /home/anvres/Изображения/quilt/build/libs/quilt-0.1-recode.jar /home/anvres/Изображения/quilt/run/mods/quilt.jar 2>/dev/null || true"
+  }
+}

@@ -1,0 +1,10 @@
+/.idea/
+/.gradle/
+/build/
+/run/
+/bin/
+/.classpath/
+/.project/
+/.settings/
+/quilt-recode-fabric_client.launch/
+/quilt-recode-fabric_server.launch/

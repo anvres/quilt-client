@@ -1,0 +1,18 @@
+package tech.quilt.client.modules.impl.combat.rotation;
+
+import net.minecraft.entity.LivingEntity;
+import tech.quilt.utility.component.RotationComponent;
+import tech.quilt.utility.game.player.rotation.Rotation;
+
+public class ReallyWorldRotation extends RotationBase {
+    @Override
+    public void update(Rotation targetAngle, boolean elytraVisual) {
+        update(null, targetAngle, elytraVisual);
+    }
+
+    public void update(LivingEntity target, Rotation targetAngle, boolean elytraVisual) {
+        RotationComponent.update(targetAngle, 360.0F, 360.0F, 360.0F, 360.0F, 0, 1, elytraVisual);
+        this.lastYaw = targetAngle.getYaw();
+        this.lastPitch = targetAngle.getPitch();
+    }
+}
