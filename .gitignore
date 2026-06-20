@@ -9,3 +9,6 @@
 /quilt-recode-fabric_client.launch/
 /quilt-recode-fabric_server.launch/
 /.backups/.github/workflows/
+launcher/
+.github/
+eula.txt

@@ -10,6 +10,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandSource;
 import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.comand.api.CommandAbstract;
+import tech.quilt.base.comand.impl.BotCommand;
 import tech.quilt.base.comand.impl.ClipCommand;
 import tech.quilt.base.comand.impl.ConfigCommand;
 import tech.quilt.base.comand.impl.FriendCommand;
@@ -37,6 +38,7 @@ public class CommandManager {
       this.registerCommand(new RCTCommand());
       this.registerCommand(new GPSCommand());
       this.registerCommand(new UnhookCommand());
+      this.registerCommand(new BotCommand());
    }
 
    @Native
