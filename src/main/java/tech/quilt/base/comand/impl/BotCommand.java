@@ -98,5 +98,34 @@ public class BotCommand extends CommandAbstract {
             MessageUtil.displayInfo(Formatting.GRAY + "Total bots: " + Formatting.WHITE + BotManager.getBotCount());
             return 1;
         }));
+        
+        // .bot control <name> - Switch camera to bot
+        builder.then(literal("control").then(
+            arg("name", StringArgumentType.word()).suggests((context, suggestionsBuilder) -> {
+                for (Bot bot : BotManager.getAllBots()) {
+                    if (bot.isConnected()) {
+                        suggestionsBuilder.suggest(bot.getName());
+                    }
+                }
+                return suggestionsBuilder.buildFuture();
+            }).executes((context) -> {
+                String name = context.getArgument("name", String.class);
+                Bot bot = BotManager.getBotByName(name);
+                if (bot != null && bot.isConnected()) {
+                    // TODO: Switch camera to bot (requires Fabric API implementation)
+                    MessageUtil.displayInfo(Formatting.GRAY + "Switched to bot: " + Formatting.WHITE + name + Formatting.GRAY + " (placeholder - needs Fabric API)");
+                } else {
+                    MessageUtil.displayError(Formatting.RED + "Bot " + Formatting.WHITE + name + Formatting.RED + " not found or not connected");
+                }
+                return 1;
+            })
+        ));
+        
+        // .bot return - Return to own player
+        builder.then(literal("return").executes((context) -> {
+            // TODO: Return to own player camera (requires Fabric API implementation)
+            MessageUtil.displayInfo(Formatting.GRAY + "Returned to own player (placeholder - needs Fabric API)");
+            return 1;
+        }));
     }
 }
