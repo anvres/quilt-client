@@ -6,6 +6,7 @@ import bots.BotStarter;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.Formatting;
 import ru.nexusguard.protection.annotations.Native;
@@ -111,9 +112,15 @@ public class BotCommand extends CommandAbstract {
             }).executes((context) -> {
                 String name = context.getArgument("name", String.class);
                 Bot bot = BotManager.getBotByName(name);
-                if (bot != null && bot.isConnected()) {
-                    // TODO: Switch camera to bot (requires Fabric API implementation)
-                    MessageUtil.displayInfo(Formatting.GRAY + "Switched to bot: " + Formatting.WHITE + name + Formatting.GRAY + " (placeholder - needs Fabric API)");
+                MinecraftClient mc = MinecraftClient.getInstance();
+                if (bot != null && bot.isConnected() && mc.player != null) {
+                    try {
+                        // TODO: Implement actual camera switching
+                        // This requires accessing the bot's player entity and setting it as renderViewEntity
+                        MessageUtil.displayInfo(Formatting.GRAY + "Switched to bot: " + Formatting.WHITE + name + Formatting.GRAY + " (placeholder)");
+                    } catch (Exception e) {
+                        MessageUtil.displayError(Formatting.RED + "Failed to switch to bot: " + e.getMessage());
+                    }
                 } else {
                     MessageUtil.displayError(Formatting.RED + "Bot " + Formatting.WHITE + name + Formatting.RED + " not found or not connected");
                 }
@@ -123,8 +130,18 @@ public class BotCommand extends CommandAbstract {
         
         // .bot return - Return to own player
         builder.then(literal("return").executes((context) -> {
-            // TODO: Return to own player camera (requires Fabric API implementation)
-            MessageUtil.displayInfo(Formatting.GRAY + "Returned to own player (placeholder - needs Fabric API)");
+            MinecraftClient mc = MinecraftClient.getInstance();
+            try {
+                if (mc.player != null && mc.world != null) {
+                    // Reset to own player's camera
+                    mc.setCameraEntity(mc.player);
+                    MessageUtil.displayInfo(Formatting.GRAY + "Returned to own player");
+                } else {
+                    MessageUtil.displayError(Formatting.RED + "Cannot return: player or world is null");
+                }
+            } catch (Exception e) {
+                MessageUtil.displayError(Formatting.RED + "Failed to return: " + e.getMessage());
+            }
             return 1;
         }));
     }
