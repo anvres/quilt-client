@@ -78,6 +78,7 @@ public final class Aura extends Module {
     private final ModeSetting.Value modeHVH;
     private final ModeSetting.Value modeLonyJir;
     private final ModeSetting.Value modeLegendsGrief;
+    private final ModeSetting.Value modeHuman;
 
     private final VanillaRotation rotVanilla = new VanillaRotation();
     private final FunTimeRotation rotFunTime = new FunTimeRotation();
@@ -88,6 +89,7 @@ public final class Aura extends Module {
     private final HVHRotation rotHVH = new HVHRotation();
     private final LonyJirRotation rotLonyJir = new LonyJirRotation();
     private final LegendsGriefRotation rotLegendsGrief = new LegendsGriefRotation();
+    private final HumanRotation rotHuman = new HumanRotation();
 
     public final ModeSetting rotationSpeed;
     private final ModeSetting.Value speedUltraLegit;
@@ -143,6 +145,7 @@ public final class Aura extends Module {
         this.modeHVH = new ModeSetting.Value(this.rotationMode, "HVH");
         this.modeLonyJir = new ModeSetting.Value(this.rotationMode, "LonyJir");
         this.modeLegendsGrief = new ModeSetting.Value(this.rotationMode, "LegendsGrief");
+        this.modeHuman = new ModeSetting.Value(this.rotationMode, "Human");
 
         this.rotationSpeed = new ModeSetting("Скорость ротаций", new String[0]);
         this.speedUltraLegit = new ModeSetting.Value(this.rotationSpeed, "UltraLegit");
@@ -172,6 +175,7 @@ public final class Aura extends Module {
         this.script = new ScriptManager.ScriptTask();
         this.lastSlot = -1;
     }
+    
 
     @Native
     private void breakShieldAndAttack() {
@@ -251,6 +255,7 @@ public final class Aura extends Module {
         } else if (newTarget != null) {
             this.target = newTarget;
             this.targetLostTicks = 0;
+            this.rotHuman.setTarget(newTarget);
         } else if (this.target != null && !this.isValid(this.target)) {
             this.targetLostTicks++;
             if (this.targetLostTicks > 5) this.target = null;
@@ -268,6 +273,10 @@ public final class Aura extends Module {
         }
 
         if (!this.isElytraPredictActive()) this.resetElytraPredictState();
+        
+        // Обновляем настройки нейронной сети при их изменении
+        if (this.modeHuman.isSelected()) {
+        }
     }
 
     @EventTarget
@@ -322,6 +331,7 @@ public final class Aura extends Module {
             else if (this.modeHVH.isSelected()) currentRot = rotHVH;
             else if (this.modeLonyJir.isSelected()) currentRot = rotLonyJir;
             else if (this.modeLegendsGrief.isSelected()) currentRot = rotLegendsGrief;
+            else if (this.modeHuman.isSelected()) currentRot = rotHuman;
 
             if (currentRot != null) {
                 currentRot.setYaw(this.lastYaw);
@@ -334,6 +344,7 @@ public final class Aura extends Module {
                 else if (currentRot instanceof Sloth1Rotation r) r.update(this.target, angle, elytraVisual);
                 else if (currentRot instanceof Sloth2Rotation r) r.update(this.target, angle, elytraVisual);
                 else if (currentRot instanceof LegendsGriefRotation r) r.update(this.target, angle, elytraVisual);
+                else if (currentRot instanceof HumanRotation r) r.update(this.target, angle, elytraVisual);
                 else currentRot.update(angle, elytraVisual);
 
                 this.lastYaw = currentRot.getYaw();
@@ -642,6 +653,7 @@ public final class Aura extends Module {
         Quilt.getInstance().getModuleManager().setAcceleration(0.0F);
         this.resetElytraPredictState();
         this.resetSprintResetState();
+        this.rotHuman.resetHistory();
         super.onDisable();
     }
 }

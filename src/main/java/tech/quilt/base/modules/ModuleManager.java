@@ -32,6 +32,7 @@ import tech.quilt.client.modules.impl.combat.AutoTotem;
 import tech.quilt.client.modules.impl.combat.ClickPearl;
 import tech.quilt.client.modules.impl.combat.HitBox;
 import tech.quilt.client.modules.impl.combat.PacketCriticals;
+import tech.quilt.client.modules.impl.combat.TriggerBot;
 import tech.quilt.client.modules.impl.combat.Velocity;
 import tech.quilt.client.modules.impl.misc.AHHelper;
 import tech.quilt.client.modules.impl.misc.AutoAccept;
@@ -130,6 +131,7 @@ public final class ModuleManager implements IMinecraft {
        registerModule(ClickPearl.INSTANCE);
        registerModule(HitBox.INSTANCE);
        registerModule(PacketCriticals.INSTANCE);
+       registerModule(TriggerBot.INSTANCE);
        registerModule(Velocity.INSTANCE);
     }
 
