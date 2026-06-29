@@ -16,6 +16,7 @@ import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.base.events.impl.render.EventHudRender;
 import tech.quilt.client.hud.elements.component.InformationComponent;
 import tech.quilt.client.hud.elements.component.KeybindsComponent;
+import tech.quilt.client.hud.elements.component.ModuleListComponent;
 import tech.quilt.client.hud.elements.component.NotifyComponent;
 import tech.quilt.client.hud.elements.component.PotionsComponent;
 import tech.quilt.client.hud.elements.component.StaffComponent;
@@ -38,7 +39,7 @@ import tech.quilt.utility.render.display.base.GuiUtil;
 )
 public final class Interface extends Module {
    public static final Interface INSTANCE = new Interface();
-   private final MultiBooleanSetting elementsSetting = MultiBooleanSetting.create("Элементы", List.of("Ватермарка", "Эффекты", "Модераторы", "Уведомления", "Информация", "Бинды", "Таргет худ"));
+    private final MultiBooleanSetting elementsSetting = MultiBooleanSetting.create("Элементы", List.of("Ватермарка", "Эффекты", "Модераторы", "Уведомления", "Информация", "Бинды", "Таргет худ", "Список модулей"));
    private final List<DraggableHudElement> elements = new ArrayList();
    private DraggableHudElement draggingElement = null;
    private float dragOffsetX;
@@ -55,6 +56,7 @@ public final class Interface extends Module {
       this.addElement(new InformationComponent("Information", 0.0F, 0.0F, 960.0F, 495.5F, 10.0F, 41.5F, DraggableHudElement.Align.TOP_LEFT));
       this.addElement(new KeybindsComponent("Keybinds", 349.0F, 0.0F, 960.0F, 495.5F, -122.0F, 73.0F, DraggableHudElement.Align.TOP_RIGHT));
       this.addElement(new TargetHudComponent("TargetHUD", 166.5F, 128.5F, 960.0F, 495.5F, 0.0F, 31.75F, DraggableHudElement.Align.CENTER));
+      this.addElement(new ModuleListComponent("ModuleList", 0.0F, 0.0F, 960.0F, 495.5F, 200.0F, 10.0F, DraggableHudElement.Align.TOP_RIGHT));
    }
 
    public void onEnable() {

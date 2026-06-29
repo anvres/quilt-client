@@ -35,9 +35,11 @@ import tech.quilt.client.modules.impl.combat.PacketCriticals;
 import tech.quilt.client.modules.impl.combat.TriggerBot;
 import tech.quilt.client.modules.impl.combat.Velocity;
 import tech.quilt.client.modules.impl.misc.AHHelper;
+import tech.quilt.client.modules.impl.misc.AnyDeskMonitor;
 import tech.quilt.client.modules.impl.misc.AutoAccept;
 import tech.quilt.client.modules.impl.misc.AutoDuel;
 import tech.quilt.client.modules.impl.misc.AutoRespawn;
+import tech.quilt.client.modules.impl.misc.GriefJoiner;
 import tech.quilt.client.modules.impl.misc.Joiner;
 import tech.quilt.client.modules.impl.misc.ClickAction;
 import tech.quilt.client.modules.impl.misc.ElytraHelper;
@@ -52,17 +54,22 @@ import tech.quilt.client.modules.impl.misc.ScoreboardHealth;
 import tech.quilt.client.modules.impl.misc.ServerHelper;
 import tech.quilt.client.modules.impl.movement.AirStuck;
 import tech.quilt.client.modules.impl.movement.AutoSprint;
+import tech.quilt.client.modules.impl.movement.ElytraResolver;
+import tech.quilt.client.modules.impl.movement.ElytraSample;
+import tech.quilt.client.modules.impl.movement.ElytraTarget;
 import tech.quilt.client.modules.impl.movement.GrimGlide;
 import tech.quilt.client.modules.impl.movement.ElytraBooster;
+import tech.quilt.client.modules.impl.movement.ElytraControl;
 import tech.quilt.client.modules.impl.movement.ElytraExploit;
+import tech.quilt.client.modules.impl.movement.ElytraManager;
 import tech.quilt.client.modules.impl.movement.Flight;
 import tech.quilt.client.modules.impl.movement.ElytraMotion;
 import tech.quilt.client.modules.impl.movement.ElytraRecast;
 import tech.quilt.client.modules.impl.movement.GuiWalk;
+import tech.quilt.client.modules.impl.movement.Jesus;
 import tech.quilt.client.modules.impl.movement.NoSlow;
 import tech.quilt.client.modules.impl.movement.NoWeb;
 import tech.quilt.client.modules.impl.movement.Speed;
-import tech.quilt.client.modules.impl.movement.ElytraSample;
 import tech.quilt.client.modules.impl.movement.Strafe;
 import tech.quilt.client.modules.impl.movement.SuperFirework;
 import tech.quilt.client.modules.impl.movement.VanillaSpeed;
@@ -87,6 +94,7 @@ import tech.quilt.client.modules.impl.render.ExtraTab;
 import tech.quilt.client.modules.impl.render.FullBright;
 import tech.quilt.client.modules.impl.render.Interface;
 import tech.quilt.client.modules.impl.render.Menu;
+import tech.quilt.client.modules.impl.render.Menu2Module;
 import tech.quilt.client.modules.impl.render.NoRender;
 import tech.quilt.client.modules.impl.render.Predictions;
 import tech.quilt.client.modules.impl.render.SwingAnimation;
@@ -138,19 +146,24 @@ public final class ModuleManager implements IMinecraft {
     private void registerMovement() {
        registerModule(AutoSprint.INSTANCE);
        registerModule(ElytraBooster.INSTANCE);
+       registerModule(ElytraControl.INSTANCE);
+       registerModule(ElytraManager.INSTANCE);
        registerModule(ElytraRecast.INSTANCE);
        registerModule(ElytraExploit.INSTANCE);
-       registerModule(GrimGlide.INSTANCE);
-       registerModule(GuiWalk.INSTANCE);
-       registerModule(NoSlow.INSTANCE);
-       registerModule(Speed.INSTANCE);
-       registerModule(AirStuck.INSTANCE);
-       registerModule(ElytraMotion.INSTANCE);
-       registerModule(NoWeb.INSTANCE);
-       registerModule(SuperFirework.INSTANCE);
-       registerModule(ElytraSample.INSTANCE);
-       registerModule(Strafe.INSTANCE);
-       registerModule(VanillaSpeed.INSTANCE);
+        registerModule(GrimGlide.INSTANCE);
+        registerModule(GuiWalk.INSTANCE);
+        registerModule(Jesus.INSTANCE);
+        registerModule(NoSlow.INSTANCE);
+        registerModule(Speed.INSTANCE);
+        registerModule(AirStuck.INSTANCE);
+        registerModule(ElytraMotion.INSTANCE);
+        registerModule(ElytraResolver.INSTANCE);
+        registerModule(ElytraTarget.INSTANCE);
+        registerModule(NoWeb.INSTANCE);
+        registerModule(SuperFirework.INSTANCE);
+        registerModule(ElytraSample.INSTANCE);
+        registerModule(Strafe.INSTANCE);
+        registerModule(VanillaSpeed.INSTANCE);
     }
 
     private void registerRender() {
@@ -170,7 +183,8 @@ public final class ModuleManager implements IMinecraft {
        registerModule(Arrows.INSTANCE);
        registerModule(ExtraTab.INSTANCE);
        registerModule(SeeInvisibles.INSTANCE);
-       registerModule(CameraClip.INSTANCE);
+        registerModule(CameraClip.INSTANCE);
+        registerModule(Menu2Module.INSTANCE);
     }
 
     private void registerPlayer() {
@@ -202,9 +216,11 @@ public final class ModuleManager implements IMinecraft {
        registerModule(AutoDuel.INSTANCE);
        registerModule(AutoRespawn.INSTANCE);
        registerModule(NameProtect.INSTANCE);
-       registerModule(ScoreboardHealth.INSTANCE);
-        registerModule(Flight.INSTANCE);
-        registerModule(HWHelper.INSTANCE);
+        registerModule(ScoreboardHealth.INSTANCE);
+         registerModule(AnyDeskMonitor.INSTANCE);
+         registerModule(GriefJoiner.INSTANCE);
+         registerModule(Flight.INSTANCE);
+         registerModule(HWHelper.INSTANCE);
     }
 
    private void registerModule(Module module) {

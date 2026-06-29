@@ -1,5 +1,7 @@
 package tech.quilt.client.modules.impl.movement;
 
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
 import tech.quilt.client.modules.api.ModuleAnnotation;
@@ -14,7 +16,8 @@ import tech.quilt.client.modules.api.setting.impl.NumberSetting;
 )
 public final class SuperFirework extends Module {
    public static final SuperFirework INSTANCE = new SuperFirework();
-   public final ModeSetting mode = new ModeSetting("Мод", "BravoHvH", "ReallyWorld", "PulseHVH", "Custom");
+
+   public final ModeSetting mode = new ModeSetting("Мод", "BravoHvH", "ReallyWorld", "PulseHVH", "Custom", "Angle");
    public final NumberSetting speed = new NumberSetting("Скорость", 1.70F, 1.50F, 8.00F, 0.01F);
    public final BooleanSetting nearBoost = new BooleanSetting("Ускорение если рядом игрок", false);
 
@@ -68,5 +71,34 @@ public final class SuperFirework extends Module {
       speedD_7 = 1.7F; speedD_8 = 1.65F; speedD_9 = 1.63F;
       speedNXZ = 1.66F;
       speedNY = 1.66F;
+   }
+
+   public Vec3d getAngleBoost(float yaw, float pitch) {
+      yaw = MathHelper.wrapDegrees(yaw);
+      float na = normalizeAngle(yaw);
+      float pa = normalizeAngle(pitch);
+
+      float boostXZ = interpolateBoost(na);
+      float boostY = interpolateBoost(pa);
+
+      if (boostY > boostXZ) boostXZ = boostY;
+
+      return new Vec3d(boostXZ, boostY, boostXZ);
+   }
+
+   private float normalizeAngle(float angle) {
+      float a = Math.abs(angle);
+      if (a > 45) a = 90 - a;
+      if (a > 45) a = 90 - a;
+      return Math.max(0, Math.min(45, a));
+   }
+
+   private float interpolateBoost(float angle) {
+      float[] diags = {diag1, diag2, diag3, diag4, diag5, diag6, diag7, diag8, diag9, diag10};
+      int step = 5;
+      int idx = (int) (angle / step);
+      if (idx >= diags.length) idx = diags.length - 1;
+      if (idx < 0) idx = 0;
+      return diags[idx] * 0.1F + 1.0F;
    }
 }

@@ -52,7 +52,7 @@ public class PotionsComponent extends DraggableHudElement {
          this.updatePotions();
          float posX = this.getX();
          float posY = this.getY();
-         float defaultWidth = 47.0F;
+          float defaultWidth = Fonts.REGULAR.getWidth("Potions", 7.0F) + 30.0F;
          float height = 14.5F;
          this.potionItems.sort(Comparator.comparing((pi) -> {
             return pi.name;
@@ -80,16 +80,16 @@ public class PotionsComponent extends DraggableHudElement {
          }
 
          this.xLine.update(durationWidth);
-         if (!isFound && !(mc.currentScreen instanceof ChatScreen)) {
-            this.alpha.update(0.0F);
-         }
-
-         if (mc.currentScreen instanceof ChatScreen) {
+          if (isFound) {
             this.alpha.update(1.0F);
-         }
+          } else {
+            this.alpha.update(0.0F);
+          }
 
-         Theme theme = Quilt.getInstance().getThemeManager().getCurrentTheme();
-         DrawUtil.drawBlur(ctx.getMatrices(), posX, posY, this.widthAnimation.getValue(), 14.5F, 11.0F, BorderRadius.all(3.0F), new ColorRGBA(80, 80, 80, 255.0F * this.alpha.getValue()));
+          if (this.alpha.getValue() <= 0.01F) return;
+
+          Theme theme = Quilt.getInstance().getThemeManager().getCurrentTheme();
+          DrawUtil.drawBlur(ctx.getMatrices(), posX, posY, this.widthAnimation.getValue(), 14.5F, 11.0F, BorderRadius.all(3.0F), new ColorRGBA(80, 80, 80, 255.0F * this.alpha.getValue()));
          DrawUtil.drawRoundedRect(ctx.getMatrices(), posX + 15.0F, posY + 1.5F, 0.5F, 12.25F, BorderRadius.all(0.0F), new ColorRGBA(166, 166, 166, 255.0F * this.alpha.getValue()));
          ctx.drawText(Fonts.ICONS2.getFont(7.0F), "\uf6e1", posX + 5.0F, posY + 5.0F, theme.getColor().withAlpha(255.0F * this.alpha.getValue()));
          ctx.drawText(Fonts.REGULAR.getFont(7.0F), "Potions", posX + 19.5F, posY + 4.75F, (new ColorRGBA(-1)).withAlpha(255.0F * this.alpha.getValue()));

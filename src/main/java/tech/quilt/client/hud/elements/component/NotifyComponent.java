@@ -51,9 +51,11 @@ public class NotifyComponent extends DraggableHudElement {
       Font textFont = Fonts.REGULAR.getFont(6.75F);
       Font iconFont = Fonts.ICONS2.getFont(6.75F);
       float notificationHeight = 12.0F;
-      float x = (float)mc.getWindow().getScaledWidth() / 2.0F - 44.0F;
-      float y = (float)mc.getWindow().getScaledHeight() / 2.0F + 16.0F;
-      DrawUtil.drawBlur(ctx.getMatrices(), x + 0.5F, y, 88.0F, notificationHeight, 11.0F, BorderRadius.all(3.0F), new ColorRGBA(80, 80, 80, 255.0F * this.toggleAnimation.getValue()));
+      float x = getX();
+      float y = getY();
+      float headerW = 88.0F;
+      float centerX = x + headerW / 2.0F;
+      DrawUtil.drawBlur(ctx.getMatrices(), x + 0.5F, y, headerW, notificationHeight, 11.0F, BorderRadius.all(3.0F), new ColorRGBA(80, 80, 80, 255.0F * this.toggleAnimation.getValue()));
       ColorRGBA color = new ColorRGBA(76, 255, 76);
       String icon = "\uf058";
       if (System.currentTimeMillis() % 2500L > 500L) {
@@ -83,12 +85,19 @@ public class NotifyComponent extends DraggableHudElement {
 
       ctx.drawText(textFont, "Пример уведомления", x + 17.0F, y + (12.0F - textFont.height()) / 2.0F, ColorRGBA.WHITE.withAlpha(255.0F * this.toggleAnimation.getValue()));
 
+      float totalH = notificationHeight;
+
       NotifyComponent.BaseNotification n;
       for(Iterator var11 = Lists.reverse(this.notifications).iterator(); var11.hasNext(); y += 8.0F * n.alphaAnimation.getValue()) {
          n = (NotifyComponent.BaseNotification)var11.next();
          y += 4.0F * n.alphaAnimation.getValue();
-         n.render(ctx, (float)mc.getWindow().getScaledWidth() / 2.0F, y - 4.0F, textFont, theme, notificationHeight, this);
+         float nY = y - 4.0F;
+         n.render(ctx, centerX, nY, textFont, theme, notificationHeight, this);
+         totalH = (nY + notificationHeight) - getY();
       }
+
+      this.width = headerW;
+      this.height = totalH;
 
       while(true) {
          while(iterator.hasNext()) {

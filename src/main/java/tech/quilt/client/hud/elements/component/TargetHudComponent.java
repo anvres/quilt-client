@@ -1,11 +1,15 @@
 package tech.quilt.client.hud.elements.component;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -16,13 +20,12 @@ import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
 import tech.quilt.base.font.Font;
 import tech.quilt.base.font.Fonts;
-import tech.quilt.base.font.MsdfRenderer;
 import tech.quilt.base.theme.Theme;
 import tech.quilt.client.hud.elements.draggable.DraggableHudElement;
-import tech.quilt.client.modules.impl.combat.Aura;
 import tech.quilt.client.modules.impl.misc.NameProtect;
 import tech.quilt.client.modules.impl.misc.ScoreboardHealth;
 import tech.quilt.utility.game.player.PlayerIntersectionUtil;
+import tech.quilt.utility.game.player.rotation.Rotation;
 import tech.quilt.utility.mixin.accessors.DrawContextAccessor;
 import tech.quilt.utility.render.display.StencilUtil;
 import tech.quilt.utility.render.display.base.BorderRadius;
@@ -49,12 +52,49 @@ public class TargetHudComponent extends DraggableHudElement {
 
    @Native
    public void render(CustomDrawContext ctx) {
-      Aura aura = Aura.INSTANCE;
-      LivingEntity target = mc.currentScreen instanceof ChatScreen ? mc.player : aura.getTarget();
-      this.setTarget((LivingEntity)target);
+      LivingEntity target = findLookTarget();
+      this.setTarget(target);
       if (this.toggleAnimationMetanoise.getValue() != 0.0F && this.target != null) {
          this.renderTargetHud(ctx, this.target, this.toggleAnimation.getValue());
       }
+   }
+
+   private LivingEntity findLookTarget() {
+      if (mc.player == null || mc.world == null) return null;
+      double range = 10.0;
+      float fov = 45.0F;
+      List<LivingEntity> candidates = new ArrayList<>();
+
+      for (Entity entity : mc.world.getEntities()) {
+         if (!(entity instanceof LivingEntity living)) continue;
+         if (living == mc.player) continue;
+         if (!living.isAlive() || living.getHealth() <= 0.0F) continue;
+         if (living instanceof ArmorStandEntity) continue;
+         if (living instanceof PlayerEntity player && Quilt.getInstance().getFriendManager().isFriend(player.getName().getString())) continue;
+
+         double dist = mc.player.distanceTo(living);
+         if (dist > range) continue;
+
+         Rotation needed = Rotation.getRotations(living.getBoundingBox().getCenter());
+         float yawDiff = Math.abs(MathHelper.wrapDegrees(needed.getYaw() - mc.player.getYaw()));
+         float pitchDiff = Math.abs(MathHelper.wrapDegrees(needed.getPitch() - mc.player.getPitch()));
+         if (yawDiff > fov || pitchDiff > fov) continue;
+
+         if (!mc.player.canSee(living)) continue;
+
+         candidates.add(living);
+      }
+
+      if (candidates.isEmpty()) return null;
+
+      candidates.sort(Comparator.comparingDouble(e -> {
+         Rotation rot = Rotation.getRotations(e.getBoundingBox().getCenter());
+         float yd = Math.abs(MathHelper.wrapDegrees(rot.getYaw() - mc.player.getYaw()));
+         float pd = Math.abs(MathHelper.wrapDegrees(rot.getPitch() - mc.player.getPitch()));
+         return yd + pd;
+      }));
+
+      return candidates.get(0);
    }
 
    @Native
@@ -94,7 +134,7 @@ public class TargetHudComponent extends DraggableHudElement {
       }
 
       DrawUtil.drawPlayerHeadWithRoundedShader(ctx.getMatrices(), skinTextures, posX + 4.0F, posY + 4.0F, 22.0F, BorderRadius.all(3.0F), ColorRGBA.WHITE.withAlpha(animation * 255.0F));
-      MsdfRenderer.renderText(Fonts.REGULAR, target == mc.player ? NameProtect.getCustomName() : target.getNameForScoreboard(), 7.25F, ColorRGBA.WHITE.withAlpha(animation * 255.0F).getRGB(), ctx.getMatrices().peek().getPositionMatrix(), posX + 29.0F, posY + 5.5F, 0.0F, true, 0.7F, 1.0F, 56.0F);
+      ctx.drawText(Fonts.REGULAR.getFont(6.5F), target == mc.player ? NameProtect.getCustomName() : target.getNameForScoreboard(), posX + 29.0F, posY + 5.5F, ColorRGBA.WHITE.withAlpha(animation * 255.0F));
       ctx.drawText(Fonts.REGULAR.getFont(6.5F), "HP: " + String.format("%.0f", hp) + (target.getAbsorptionAmount() > 0.0F ? String.format(" (%.1f)", target.getAbsorptionAmount()) : "").replace(",", "."), posX + 29.75F, posY + 14.25F, ColorRGBA.WHITE.withAlpha(animation * 255.0F));
       DrawUtil.drawRoundedRect(ctx.getMatrices(), posX + 29.0F, posY + 22.0F, width - 33.0F, 3.25F, BorderRadius.all(0.25F), theme.getSecondColor().darker(0.5F).withAlpha(animation * 255.0F), theme.getSecondColor().darker(0.5F).withAlpha(animation * 255.0F), theme.getColor().darker(0.5F).withAlpha(animation * 255.0F), theme.getColor().darker(0.5F).withAlpha(animation * 255.0F));
       DrawUtil.drawRoundedRect(ctx.getMatrices(), posX + 29.0F, posY + 22.0F, MathHelper.clamp((width - 33.0F) * this.outdatedHealthAnimation.getValue(), 0.0F, width - 33.0F), 3.25F, BorderRadius.all(0.25F), theme.getSecondColor().darker(0.35F).withAlpha(animation * 255.0F), theme.getSecondColor().darker(0.35F).withAlpha(animation * 255.0F), theme.getColor().darker(0.35F).withAlpha(animation * 255.0F), theme.getColor().darker(0.35F).withAlpha(animation * 255.0F));

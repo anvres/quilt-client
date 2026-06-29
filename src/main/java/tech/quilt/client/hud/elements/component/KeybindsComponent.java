@@ -1,8 +1,12 @@
 package tech.quilt.client.hud.elements.component;
 
-import java.util.Iterator;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import net.minecraft.client.gui.screen.ChatScreen;
-import ru.nexusguard.protection.annotations.Native;
+import tech.quilt.utility.render.display.Keyboard;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -10,94 +14,100 @@ import tech.quilt.base.font.Fonts;
 import tech.quilt.base.theme.Theme;
 import tech.quilt.client.hud.elements.draggable.DraggableHudElement;
 import tech.quilt.client.modules.api.Module;
-import tech.quilt.utility.render.display.Keyboard;
 import tech.quilt.utility.render.display.base.BorderRadius;
 import tech.quilt.utility.render.display.base.CustomDrawContext;
 import tech.quilt.utility.render.display.base.color.ColorRGBA;
 import tech.quilt.utility.render.display.shader.DrawUtil;
 
 public class KeybindsComponent extends DraggableHudElement {
-   private final Animation widthAnimation;
-   private final Animation xLine;
-   private final Animation alpha;
+    private final Animation alpha = new Animation(200L, Easing.CUBIC_OUT);
+    private final Animation widthAnim = new Animation(200L, Easing.CUBIC_OUT);
+    private final Animation heightAnim = new Animation(200L, Easing.CUBIC_OUT);
+    private final Map<Module, Animation> moduleAnims = new HashMap<>();
 
-   public KeybindsComponent(String name, float initialX, float initialY, float windowWidth, float windowHeight, float offsetX, float offsetY, DraggableHudElement.Align align) {
-      super(name, initialX, initialY, windowWidth, windowHeight, offsetX, offsetY, align);
-      this.widthAnimation = new Animation(200L, Easing.CUBIC_OUT);
-      this.xLine = new Animation(170L, Easing.SINE_OUT);
-      this.alpha = new Animation(200L, Easing.CUBIC_OUT);
-   }
+    public KeybindsComponent(String name, float initialX, float initialY, float windowWidth, float windowHeight, float offsetX, float offsetY, Align align) {
+        super(name, initialX, initialY, windowWidth, windowHeight, offsetX, offsetY, align);
+    }
 
-   @Native
-   public void render(CustomDrawContext ctx) {
-      float posX = this.getX();
-      float posY = this.getY();
-      float defaultWidth = 53.0F;
-      float height = 14.5F;
-      boolean isFound = false;
-      Iterator var7 = Quilt.getInstance().getModuleManager().getModules().iterator();
+    public void render(CustomDrawContext ctx) {
+        if (mc.player == null) return;
 
-      while(var7.hasNext()) {
-         Module module = (Module)var7.next();
-         if (module.isEnabled() && module.getKeyCode() != -1) {
-            this.alpha.update(1.0F);
-            isFound = true;
-         }
-      }
+        float x = getX();
+        float y = getY();
+        Theme theme = Quilt.getInstance().getThemeManager().getCurrentTheme();
+        boolean inChat = mc.currentScreen instanceof ChatScreen;
 
-      if (!isFound && !(mc.currentScreen instanceof ChatScreen)) {
-         this.alpha.update(0.0F);
-      }
+        List<Module> modules = Quilt.getInstance().getModuleManager().getModules().stream()
+                .filter(m -> m.getKeyCode() != -100)
+                .sorted(Comparator.comparing(Module::getName))
+                .collect(Collectors.toList());
 
-      if (mc.currentScreen instanceof ChatScreen) {
-         this.alpha.update(1.0F);
-      }
+        boolean hasVisible = inChat || modules.stream().anyMatch(m -> m.isEnabled());
+        alpha.update(hasVisible ? 1.0F : 0.0F);
+        float a = alpha.getValue();
+        if (a <= 0.01F) {
+            this.width = 0;
+            this.height = 0;
+            return;
+        }
 
-      Theme theme = Quilt.getInstance().getThemeManager().getCurrentTheme();
-      DrawUtil.drawBlur(ctx.getMatrices(), posX, posY, this.widthAnimation.getValue(), 14.5F, 11.0F, BorderRadius.all(3.0F), new ColorRGBA(80, 80, 80, 255.0F * this.alpha.getValue()));
-      DrawUtil.drawRoundedRect(ctx.getMatrices(), posX + 15.0F, posY + 1.5F, 0.5F, 12.25F, BorderRadius.all(0.0F), new ColorRGBA(166, 166, 166, 255.0F * this.alpha.getValue()));
-      ctx.drawText(Fonts.ICONS2.getFont(7.0F), "\uf11c", posX + 4.0F, posY + 5.0F, theme.getColor().withAlpha(255.0F * this.alpha.getValue()));
-      ctx.drawText(Fonts.REGULAR.getFont(7.0F), "KeyBinds", posX + 19.5F, posY + 4.75F, (new ColorRGBA(-1)).withAlpha(255.0F * this.alpha.getValue()));
-      posY += 14.5F;
-      float bindWidth = 0.0F;
-      Iterator var9 = Quilt.getInstance().getModuleManager().getModules().iterator();
+        for (Module m : modules) {
+            Animation anim = moduleAnims.computeIfAbsent(m, k -> new Animation(250L, Easing.CUBIC_OUT));
+            anim.update(m.isEnabled() ? 1.0F : 0.0F);
+        }
+        moduleAnims.keySet().removeIf(m -> !modules.contains(m));
 
-      Module module;
-      while(var9.hasNext()) {
-         module = (Module)var9.next();
-         if (module.getAnimation().getValue() != 0.0F && module.getKeyCode() != -1) {
-            float localBindWidth = Fonts.REGULAR.getWidth(Keyboard.getKeyName(module.getKeyCode()), 6.75F);
-            if (localBindWidth > bindWidth) {
-               bindWidth = localBindWidth;
+        float headerH = 14.0F;
+        float itemH = 11.0F;
+        float maxW = 75.0F;
+        float contentH = 0;
+
+        for (Module m : modules) {
+            Animation anim = moduleAnims.get(m);
+            float v = anim != null ? anim.getValue() : (m.isEnabled() ? 1.0F : 0.0F);
+            if (v > 0.01F) {
+                float keyW = Fonts.REGULAR.getWidth(getKeyName(m.getKeyCode()), 6.5F);
+                float nameW = Fonts.REGULAR.getWidth(m.getName(), 6.5F);
+                float totalW = nameW + keyW + 12.0F;
+                if (totalW > maxW) maxW = totalW;
+                contentH += itemH * v;
             }
-         }
-      }
+        }
 
-      this.xLine.update(bindWidth);
-      var9 = Quilt.getInstance().getModuleManager().getModules().iterator();
+        widthAnim.update(maxW + 8.0F);
+        float w = widthAnim.getValue();
+        float totalH = headerH + contentH;
 
-      while(var9.hasNext()) {
-         module = (Module)var9.next();
-         if (module.getAnimation().getValue() != 0.0F && module.getKeyCode() != -1) {
-            height += 11.0F;
-            String bind = Keyboard.getKeyName(module.getKeyCode());
-            String moduleName = module.getName();
-            float elementsWidth = Fonts.REGULAR.getWidth(moduleName, 6.75F) + Fonts.REGULAR.getWidth(bind, 6.75F) + 40.0F;
-            DrawUtil.drawBlur(ctx.getMatrices(), posX, posY + module.getAnimation().getValue() * 3.0F - 3.0F, this.widthAnimation.getValue(), 11.0F, 11.0F, BorderRadius.all(3.0F), new ColorRGBA(80, 80, 80, 255.0F * module.getAnimation().getValue() * this.alpha.getValue()));
-            DrawUtil.drawRoundedRect(ctx.getMatrices(), posX + this.widthAnimation.getValue() - 6.5F - this.xLine.getValue(), posY + module.getAnimation().getValue() * 3.0F - 3.0F + 1.5F, 0.5F, 8.75F, BorderRadius.all(0.0F), new ColorRGBA(166, 166, 166, 255.0F * module.getAnimation().getValue() * this.alpha.getValue()));
-            ctx.drawText(Fonts.ICONS.getFont(5.0F), module.getCategory().getIcon(), posX + 3.15F, posY + module.getAnimation().getValue() * 3.0F - 3.0F + 3.5F, theme.getColor().withAlpha(module.getAnimation().getValue() * 255.0F * this.alpha.getValue()));
-            ctx.drawText(Fonts.REGULAR.getFont(6.5F), moduleName, posX + 10.5F, posY + module.getAnimation().getValue() * 3.0F - 3.0F + 3.25F, (new ColorRGBA(-1)).withAlpha(module.getAnimation().getValue() * 255.0F * this.alpha.getValue()));
-            ctx.drawText(Fonts.REGULAR.getFont(6.5F), bind, posX + this.widthAnimation.getValue() - 3.0F - this.xLine.getValue() - Fonts.REGULAR.getWidth(bind, 6.75F) / 2.0F + this.xLine.getValue() / 2.0F, posY + module.getAnimation().getValue() * 3.0F - 3.0F + 3.25F, (new ColorRGBA(-1)).withAlpha(module.getAnimation().getValue() * 255.0F * this.alpha.getValue()));
-            if (elementsWidth > defaultWidth) {
-               defaultWidth = elementsWidth;
-            }
+        DrawUtil.drawBlur(ctx.getMatrices(), x, y, w, headerH, 11.0F, BorderRadius.all(3.0F), new ColorRGBA(80, 80, 80, 255.0F * a));
+        DrawUtil.drawRoundedRect(ctx.getMatrices(), x + 12.0F, y + 1.0F, 0.5F, headerH - 1.5F, BorderRadius.all(0.0F), new ColorRGBA(166, 166, 166, 255.0F * a));
+        ctx.drawText(Fonts.ICONS2.getFont(6.0F), "\uF11C", x + 3.0F, y + 4.5F, theme.getColor().withAlpha(255.0F * a));
+        ctx.drawText(Fonts.SEMIBOLD.getFont(6.75F), "\u0411\u0438\u043D\u0434\u044B", x + 16.0F, y + 4.0F, new ColorRGBA(255, 255, 255, (int)(255.0F * a)));
 
-            posY += 11.0F * module.getAnimation().getValue();
-         }
-      }
+        float cy = y + headerH;
+        for (Module m : modules) {
+            Animation anim = moduleAnims.get(m);
+            float v = anim != null ? anim.getValue() : (m.isEnabled() ? 1.0F : 0.0F);
+            if (v <= 0.01F) continue;
 
-      this.widthAnimation.update(defaultWidth);
-      this.width = this.widthAnimation.getValue();
-      this.height = height;
-   }
+            String keyName = getKeyName(m.getKeyCode());
+            float keyW = Fonts.REGULAR.getWidth(keyName, 6.5F);
+
+            ctx.drawText(Fonts.REGULAR.getFont(6.5F), m.getName(), x + 4.0F, cy + 2.5F, ColorRGBA.WHITE.withAlpha(v * 255.0F * a));
+            ctx.drawText(Fonts.REGULAR.getFont(6.5F), keyName, x + w - keyW - 4.0F, cy + 2.5F, theme.getColor().withAlpha(v * 255.0F * a));
+
+            cy += itemH * v;
+        }
+
+        this.width = w;
+        this.height = totalH;
+    }
+
+    private String getKeyName(int keyCode) {
+        if (keyCode == -1) return "\u041D\u0435\u0442";
+        try {
+            return Keyboard.getKeyName(keyCode).toUpperCase();
+        } catch (Exception e) {
+            return "\u041A" + keyCode;
+        }
+    }
 }

@@ -78,6 +78,7 @@ public final class Aura extends Module {
     private final ModeSetting.Value modeHVH;
     private final ModeSetting.Value modeLonyJir;
     private final ModeSetting.Value modeLegendsGrief;
+    private final ModeSetting.Value modeGrim;
     private final ModeSetting.Value modeHuman;
 
     private final VanillaRotation rotVanilla = new VanillaRotation();
@@ -89,14 +90,8 @@ public final class Aura extends Module {
     private final HVHRotation rotHVH = new HVHRotation();
     private final LonyJirRotation rotLonyJir = new LonyJirRotation();
     private final LegendsGriefRotation rotLegendsGrief = new LegendsGriefRotation();
+    private final GrimRotation rotGrim = new GrimRotation();
     private final HumanRotation rotHuman = new HumanRotation();
-
-    public final ModeSetting rotationSpeed;
-    private final ModeSetting.Value speedUltraLegit;
-    private final ModeSetting.Value speedLegit;
-    private final ModeSetting.Value speedNormal;
-    private final ModeSetting.Value speedRage;
-    private final ModeSetting.Value speedHVH;
 
     private final ModeSetting correction;
     private final ModeSetting.Value correctionFocus;
@@ -109,6 +104,7 @@ public final class Aura extends Module {
     private final BooleanSetting raycastCheck;
     private final BooleanSetting doubleAttack;
     public final BooleanSetting critsOnlyWithSpace;
+    public final BooleanSetting smartCrits;
     private final BooleanSetting visualElytraRotation;
     private final BooleanSetting visualBackTurn = new BooleanSetting("Визуальный разворот", true, () -> this.predictOnElytra.isEnabled() && tech.quilt.client.modules.impl.movement.ElytraSample.INSTANCE.predictionType.is("По смещению хитбокса"));
     private final BooleanSetting visualizePrediction = new BooleanSetting("Визуализация предсказания", true);
@@ -145,14 +141,8 @@ public final class Aura extends Module {
         this.modeHVH = new ModeSetting.Value(this.rotationMode, "HVH");
         this.modeLonyJir = new ModeSetting.Value(this.rotationMode, "LonyJir");
         this.modeLegendsGrief = new ModeSetting.Value(this.rotationMode, "LegendsGrief");
+        this.modeGrim = new ModeSetting.Value(this.rotationMode, "Grim");
         this.modeHuman = new ModeSetting.Value(this.rotationMode, "Human");
-
-        this.rotationSpeed = new ModeSetting("Скорость ротаций", new String[0]);
-        this.speedUltraLegit = new ModeSetting.Value(this.rotationSpeed, "UltraLegit");
-        this.speedLegit = new ModeSetting.Value(this.rotationSpeed, "Legit");
-        this.speedNormal = (new ModeSetting.Value(this.rotationSpeed, "Normal")).select();
-        this.speedRage = new ModeSetting.Value(this.rotationSpeed, "Rage");
-        this.speedHVH = new ModeSetting.Value(this.rotationSpeed, "HVH");
 
         this.correction = new ModeSetting("Коррекция", new String[0]);
         this.correctionFocus = new ModeSetting.Value(this.correction, "Фокус");
@@ -167,6 +157,7 @@ public final class Aura extends Module {
         this.raycastCheck = new BooleanSetting("Проверка на наведение", false);
         this.doubleAttack = new BooleanSetting("Двойной удар", true);
         this.critsOnlyWithSpace = new BooleanSetting("Только с пробелом", true);
+        this.smartCrits = new BooleanSetting("Умные криты", false);
         this.visualElytraRotation = new BooleanSetting("Визуальная ротация элитр", true);
         this.keepTarget = new BooleanSetting("Удерживать одну цель", true);
         this.sprintReset = new BooleanSetting("Сброс спринта", true);
@@ -313,14 +304,6 @@ public final class Aura extends Module {
             if (useBackVisual) this.updateVisualLook(point);
             else this.resetVisualBackTurn();
 
-            // Выбираем мультипликатор скорости по пресету
-            float speedMul;
-            if (this.speedUltraLegit.isSelected())      speedMul = 0.25F;
-            else if (this.speedLegit.isSelected())      speedMul = 0.55F;
-            else if (this.speedNormal.isSelected())     speedMul = 1.0F;
-            else if (this.speedRage.isSelected())       speedMul = 3.0F;
-            else /* HVH */                              speedMul = 999.0F; // мгновенно
-
             RotationBase currentRot = null;
             if (this.modeVanilla.isSelected()) currentRot = rotVanilla;
             else if (this.modeReallyWorld.isSelected()) currentRot = rotReallyWorld;
@@ -331,12 +314,12 @@ public final class Aura extends Module {
             else if (this.modeHVH.isSelected()) currentRot = rotHVH;
             else if (this.modeLonyJir.isSelected()) currentRot = rotLonyJir;
             else if (this.modeLegendsGrief.isSelected()) currentRot = rotLegendsGrief;
+            else if (this.modeGrim.isSelected()) currentRot = rotGrim;
             else if (this.modeHuman.isSelected()) currentRot = rotHuman;
 
             if (currentRot != null) {
                 currentRot.setYaw(this.lastYaw);
                 currentRot.setPitch(this.lastPitch);
-                currentRot.setSpeedMultiplier(speedMul);
 
                 if (currentRot instanceof FunTimeRotation r) r.update(this.target, angle, elytraVisual);
                 else if (currentRot instanceof ReallyWorldRotation r) r.update(this.target, angle, elytraVisual);
@@ -344,6 +327,7 @@ public final class Aura extends Module {
                 else if (currentRot instanceof Sloth1Rotation r) r.update(this.target, angle, elytraVisual);
                 else if (currentRot instanceof Sloth2Rotation r) r.update(this.target, angle, elytraVisual);
                 else if (currentRot instanceof LegendsGriefRotation r) r.update(this.target, angle, elytraVisual);
+                else if (currentRot instanceof GrimRotation r) r.update(this.target, angle, elytraVisual);
                 else if (currentRot instanceof HumanRotation r) r.update(this.target, angle, elytraVisual);
                 else currentRot.update(angle, elytraVisual);
 
@@ -530,7 +514,7 @@ public final class Aura extends Module {
         if (mc.player.getAttackCooldownProgress(0.5F) < 0.9F) return false;
         if (!AttackUtil.canAttack()) return false;
 
-        if (this.critsOnlyWithSpace.isEnabled() && mc.player.isOnGround()) {
+        if (this.critsOnlyWithSpace.isEnabled() && !this.smartCrits.isEnabled() && mc.player.isOnGround()) {
             mc.player.jump();
             return false;
         }

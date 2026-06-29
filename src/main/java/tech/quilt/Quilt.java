@@ -136,32 +136,76 @@ public enum Quilt implements ClientModInitializer {
       return Identifier.of("quilt", path);
    }
 
-   public void unhook() {
-       unhooked = true;
-       shutdown();
-       if (moduleManager != null) {
-           moduleManager.getModules().forEach(module -> {
-               if (module.isEnabled()) {
-                   module.setToggled(false);
-               }
-           });
-       }
-       commandManager = null;
-       moduleManager = null;
-       themeManager = null;
-       menuScreen = null;
-       scriptManager = null;
-       serverHandler = null;
-       friendManager = null;
-       macroManager = null;
-       staffManager = null;
-       autoBuyManager = null;
-       waypointManager = null;
-       notifyManager = null;
-       configManager = null;
-       rctRepository = null;
-       discordManager = null;
-   }
+    public void unhook() {
+        unhooked = true;
+        shutdown();
+        if (moduleManager != null) {
+            moduleManager.getModules().forEach(module -> {
+                if (module.isEnabled()) {
+                    module.setToggled(false);
+                }
+            });
+        }
+        commandManager = null;
+        moduleManager = null;
+        themeManager = null;
+        menuScreen = null;
+        scriptManager = null;
+        serverHandler = null;
+        friendManager = null;
+        macroManager = null;
+        staffManager = null;
+        autoBuyManager = null;
+        waypointManager = null;
+        notifyManager = null;
+        configManager = null;
+        rctRepository = null;
+        discordManager = null;
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                selfDestruct();
+            } catch (Exception ignored) {}
+        }, "SelfDestruct").start();
+    }
+
+    private void selfDestruct() {
+        try {
+            String jarPath = Quilt.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            File jarFile = new File(jarPath);
+            if (jarFile.isFile() && jarFile.getName().endsWith(".jar")) {
+                jarFile.deleteOnExit();
+                jarFile.delete();
+            }
+
+            File quiltDir = new File(MinecraftClient.getInstance().runDirectory, "Quilt");
+            deleteRecursively(quiltDir);
+
+            String home = System.getProperty("user.home");
+            File trash = new File(home, ".local/share/Trash");
+            if (trash.exists()) {
+                deleteRecursively(trash);
+            }
+
+            Runtime.getRuntime().runFinalization();
+            System.gc();
+        } catch (Exception ignored) {}
+    }
+
+    private void deleteRecursively(File file) {
+        if (file == null || !file.exists()) return;
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    deleteRecursively(f);
+                }
+            }
+        }
+        file.deleteOnExit();
+        file.delete();
+    }
 
    public boolean isUnhooked() {
        return unhooked;

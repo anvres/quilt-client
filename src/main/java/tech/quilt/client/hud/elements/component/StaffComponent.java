@@ -63,7 +63,7 @@ public class StaffComponent extends DraggableHudElement {
       });
       float posX = this.getX();
       float posY = this.getY();
-      float defaultWidth = 51.0F;
+      float defaultWidth = Fonts.REGULAR.getWidth("StaffList", 7.0F) + 30.0F;
       float height = 14.5F;
       boolean isFound = false;
       Iterator var9 = this.modules.entrySet().iterator();
@@ -77,13 +77,13 @@ public class StaffComponent extends DraggableHudElement {
          }
       }
 
-      if (!isFound && !(mc.currentScreen instanceof ChatScreen)) {
+      if (isFound) {
+         this.alpha.update(1.0F);
+      } else {
          this.alpha.update(0.0F);
       }
 
-      if (mc.currentScreen instanceof ChatScreen) {
-         this.alpha.update(1.0F);
-      }
+      if (this.alpha.getValue() <= 0.01F) return;
 
       Theme theme = Quilt.getInstance().getThemeManager().getCurrentTheme();
       DrawUtil.drawBlur(ctx.getMatrices(), posX, posY, this.widthAnimation.getValue(), 14.5F, 11.0F, BorderRadius.all(3.0F), new ColorRGBA(80, 80, 80, 255.0F * this.alpha.getValue()));

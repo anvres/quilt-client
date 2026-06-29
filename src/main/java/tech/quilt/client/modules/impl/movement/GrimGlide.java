@@ -1,95 +1,91 @@
 package tech.quilt.client.modules.impl.movement;
 
 import com.darkmagician6.eventapi.EventTarget;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Vec3d;
 import tech.quilt.base.events.impl.other.EventTick;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
 import tech.quilt.client.modules.api.ModuleAnnotation;
+import tech.quilt.client.modules.api.setting.impl.BooleanSetting;
 import tech.quilt.client.modules.api.setting.impl.NumberSetting;
+import tech.quilt.client.modules.impl.combat.Aura;
 
 @ModuleAnnotation(
    name = "GrimGlide",
    category = Category.MOVEMENT,
-   description = "Legit Elytra Boost для Grim/ReallyWorld"
+   description = "Elytra boost для Grim/ReallyWorld с Aura-трекингом"
 )
 public final class GrimGlide extends Module {
    public static final GrimGlide INSTANCE = new GrimGlide();
 
-   // Слайдер скорости, подстроенный под лимиты Grim (в районе 45-50 BPS — это максимум для стабильного нажима)
-   private final NumberSetting speedTarget = new NumberSetting("Speed", 45.0F, 10.0F, 120.0F, 1.0F);
-   private int ticksTwo = 0;
+   private final NumberSetting checkDelay = new NumberSetting("Check delay (ms)", 50.0F, 10.0F, 200.0F, 5.0F);
+   private final NumberSetting forwardEven = new NumberSetting("Forward even", 0.085F, 0.01F, 0.5F, 0.005F);
+   private final NumberSetting forwardOdd = new NumberSetting("Forward odd", 0.09F, 0.01F, 0.5F, 0.005F);
+   private final BooleanSetting trackAura = new BooleanSetting("Track Aura target", true);
+   private final NumberSetting minDot = new NumberSetting("Min dot product", 0.5F, 0.1F, 1.0F, 0.05F, () -> trackAura.isEnabled());
+
+   private long lastCheckTime;
 
    @Override
    public void onEnable() {
-      ticksTwo = 0;
+      lastCheckTime = 0L;
       super.onEnable();
+   }
+
+   @Override
+   public void onDisable() {
+      lastCheckTime = 0L;
+      super.onDisable();
    }
 
    @EventTarget
    public void onTick(EventTick event) {
-      // Базовые проверки на null и полет на элитрах
       if (mc.player == null || mc.world == null || !mc.player.isGliding()) return;
 
-      ticksTwo++;
-      Vec3d pos = mc.player.getPos();
+      long now = System.currentTimeMillis();
+      if (now - lastCheckTime < checkDelay.getCurrent()) return;
+      lastCheckTime = now;
+
+      if (trackAura.isEnabled() && shouldTrackTarget()) return;
+
       float yaw = mc.player.getYaw();
+      double forward = (mc.player.age % 2 == 0) ? forwardEven.getCurrent() : forwardOdd.getCurrent();
 
-      // Легитный шаг движения вперед
-      double forward = 0.085;
+      double rad = Math.toRadians(yaw);
+      double dx = -Math.sin(rad) * forward;
+      double dz =  Math.cos(rad) * forward;
 
-      // FIX: Считаем BPS напрямую через дельту позиции
-      double dX = mc.player.getX() - mc.player.prevX;
-      double dZ = mc.player.getZ() - mc.player.prevZ;
-      double currentBps = Math.sqrt(dX * dX + dZ * dZ) * 20.0;
+      mc.player.setVelocity(dx, mc.player.getVelocity().y, dz);
 
-      // Ограничитель скорости из настроек
-      float maxSpeed = speedTarget.getCurrent();
-      if (currentBps >= maxSpeed) {
-         forward = 0.0;
+      if (mc.player.age % 2 == 0) {
+         mc.player.setPosition(
+            mc.player.getX() + dx,
+            mc.player.getY(),
+            mc.player.getZ() + dz
+         );
       }
+   }
 
-      // Переводим углы в радианы
-      double radYaw = Math.toRadians(yaw);
-      double dx = -Math.sin(radYaw) * forward;
-      double dz = Math.cos(radYaw) * forward;
+   private boolean shouldTrackTarget() {
+      if (!Aura.INSTANCE.isEnabled()) return false;
+      LivingEntity target = Aura.INSTANCE.getTarget();
+      if (target == null || !target.isGliding()) return false;
 
-      // Настройка Y-планирования (пропускает Grim Prediction)
-      double motionY = mc.player.getVelocity().y;
-      if (mc.options.jumpKey.isPressed()) {
-         motionY = 0.32;
-      } else if (mc.options.sneakKey.isPressed()) {
-         motionY = -0.32;
-      } else {
-         // Эмуляция микро-покачивания крыльев
-         motionY = (ticksTwo % 2 == 0) ? -0.01 : -0.012;
+      Vec3d vel = target.getVelocity();
+      Vec3d velH = new Vec3d(vel.x, 0.0, vel.z);
+      if (velH.lengthSquared() < 0.01) {
+         velH = target.getRotationVec(1.0f);
+         velH = new Vec3d(velH.x, 0.0, velH.z);
       }
+      if (velH.lengthSquared() < 0.1) return false;
+      velH = velH.normalize();
 
-      // Буст работает только при зажатых кнопках движения
-      if (mc.player.input.movementForward != 0 || mc.player.input.movementSideways != 0) {
-         // Рандомный множитель
-         double randomMultiplier = 1 + (Math.random() * 0.05);
-
-         // Задаем скорость ОДИН раз за тик
-         mc.player.setVelocity(dx * randomMultiplier, motionY, dz * randomMultiplier);
-
-         // Синхронизация позиции с сервером каждую итерацию движения
-         if (ticksTwo % 1 == 0) {
-            double targetX = pos.getX() + dx;
-            double targetY = pos.getY() + motionY;
-            double targetZ = pos.getZ() + dz;
-
-            // Шлем пакет позиции, чтобы Grim принял это движение за лаг, а не за чит
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(targetX, targetY, targetZ, false, false));
-
-            // Перемещаем клиента
-            mc.player.setPosition(targetX, targetY, targetZ);
-         }
-      } else {
-         // Мягкое гашение скорости, если игрок бросил управление
-         mc.player.setVelocity(0, motionY, 0);
-      }
+      Vec3d toTarget = new Vec3d(
+         mc.player.getX() - target.getX(),
+         0.0,
+         mc.player.getZ() - target.getZ()
+      );
+      return toTarget.dotProduct(velH) > minDot.getCurrent();
    }
 }
