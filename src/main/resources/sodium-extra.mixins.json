@@ -47,8 +47,7 @@
     "minecraft.render.ClientWorldPropertiesMixin",
     "minecraft.render.FeatureRendererMixin",
     "minecraft.render.MixinGameRenderer",
-    "minecraft.render.PlayerEntityRendererMixin",
-    "client.render.ItemRendererMixin"
+    "minecraft.render.PlayerEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
