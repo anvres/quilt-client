@@ -107,6 +107,7 @@ public final class Aura extends Module {
     private final BooleanSetting visualElytraRotation;
     private final BooleanSetting visualBackTurn = new BooleanSetting("Визуальный разворот", true, () -> this.predictOnElytra.isEnabled() && tech.quilt.client.modules.impl.movement.ElytraSample.INSTANCE.predictionType.is("По смещению хитбокса"));
     private final BooleanSetting visualizePrediction = new BooleanSetting("Визуализация предсказания", true);
+    private final BooleanSetting showTargetHitbox = new BooleanSetting("Показывать хитбокс цели", true);
     private final BooleanSetting skipInvisible = new BooleanSetting("Не бить инвизок", true);
     private final BooleanSetting keepTarget;
     private final BooleanSetting sprintReset;
@@ -471,7 +472,9 @@ public final class Aura extends Module {
     public void onRender3D(EventRender3D event) {
         if (mc.player == null || mc.world == null || target == null) return;
         int color = Quilt.getInstance().getThemeManager().getCurrentTheme().getColor().getRGB();
-        Render3DUtil.drawBox(target.getBoundingBox(), color, 1.0F);
+        if (this.showTargetHitbox.isEnabled()) {
+            Render3DUtil.drawBox(target.getBoundingBox(), color, 1.0F);
+        }
         if (this.isElytraPredictActive() && this.visualizePrediction.isEnabled() && this.lastPredictedPoint != null) {
             Box box = new Box(
                     lastPredictedPoint.x - 0.3, lastPredictedPoint.y - 0.3, lastPredictedPoint.z - 0.3,
