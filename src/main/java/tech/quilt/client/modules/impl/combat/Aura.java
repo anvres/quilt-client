@@ -107,7 +107,7 @@ public final class Aura extends Module {
     private final BooleanSetting visualElytraRotation;
     private final BooleanSetting visualBackTurn = new BooleanSetting("Визуальный разворот", true, () -> this.predictOnElytra.isEnabled() && tech.quilt.client.modules.impl.movement.ElytraSample.INSTANCE.predictionType.is("По смещению хитбокса"));
     private final BooleanSetting visualizePrediction = new BooleanSetting("Визуализация предсказания", true);
-    private final BooleanSetting showTargetHitbox = new BooleanSetting("Показывать хитбокс цели", true);
+    private final BooleanSetting showTargetHitbox = new BooleanSetting("Показывать хитбокс цели", false);
     private final BooleanSetting skipInvisible = new BooleanSetting("Не бить инвизок", true);
     private final BooleanSetting keepTarget;
     private final BooleanSetting sprintReset;
