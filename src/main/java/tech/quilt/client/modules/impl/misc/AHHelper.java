@@ -3,7 +3,6 @@ package tech.quilt.client.modules.impl.misc;
 import lombok.Generated;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.screen.slot.Slot;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
 import tech.quilt.client.modules.api.ModuleAnnotation;
@@ -23,12 +22,10 @@ public final class AHHelper extends Module {
    private AHHelper() {
    }
 
-   @Native
    public void renderCheat(DrawContext context, Slot slot) {
       context.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, this.cheapSlotColor.getIntColor());
    }
 
-   @Native
    public void renderGood(DrawContext context, Slot slot) {
       context.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, this.goodSlotColor.getIntColor());
    }

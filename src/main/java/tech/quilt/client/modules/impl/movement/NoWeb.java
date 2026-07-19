@@ -7,7 +7,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -23,7 +22,6 @@ public class NoWeb extends Module {
    public static final NoWeb INSTANCE = new NoWeb();
 
    @EventTarget
-   @Native
    private void onUpdate(EventUpdate e) {
       if (mc.player != null) {
          boolean cobweb = false;

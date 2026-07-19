@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.Formatting;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.comand.api.CommandAbstract;
 import tech.quilt.utility.game.other.MessageUtil;
@@ -16,7 +15,6 @@ public class ConfigCommand extends CommandAbstract {
       super("cfg");
    }
 
-   @Native
    public void execute(LiteralArgumentBuilder<CommandSource> builder) {
       builder.then(literal("save").then(arg("name", StringArgumentType.word()).executes((context) -> {
          String name = (String)context.getArgument("name", String.class);

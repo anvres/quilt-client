@@ -5,7 +5,6 @@ import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Hand;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.utility.interfaces.IMinecraft;
 
 /** @deprecated */
@@ -23,7 +22,6 @@ public class InventoryUtil implements IMinecraft {
       return findItem(item, 9, 35);
    }
 
-   @Native
    public static int findItem(Item item, int start, int end) {
       for(int i = end; i >= start; --i) {
          if (mc.player.getInventory().getStack(i).getItem() == item) {
@@ -78,7 +76,6 @@ public class InventoryUtil implements IMinecraft {
       }
    }
 
-   @Native
    public static void swapItems(int slot, int targetSlot) {
       if (slot != -1 && targetSlot != -1) {
          mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, slot, 0, SlotActionType.PICKUP, mc.player);
@@ -87,7 +84,6 @@ public class InventoryUtil implements IMinecraft {
       }
    }
 
-   @Native
    public static void swap(int slot, int targetSlot) {
       if (slot != -1 && targetSlot != -1) {
          mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, indexToSlot(slot), 0, SlotActionType.PICKUP, mc.player);

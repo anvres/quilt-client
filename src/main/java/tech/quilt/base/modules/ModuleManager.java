@@ -11,7 +11,6 @@ import lombok.Generated;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket;
 import net.minecraft.util.math.MathHelper;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.events.impl.input.EventKey;
 import tech.quilt.base.events.impl.other.EventGameUpdate;
@@ -25,13 +24,31 @@ import tech.quilt.client.modules.api.setting.impl.ModeSetting;
 import tech.quilt.client.modules.api.setting.impl.MultiBooleanSetting;
 import tech.quilt.client.modules.api.setting.impl.ModeSetting.Value;
 import tech.quilt.client.modules.impl.combat.AntiBot;
+import tech.quilt.client.modules.impl.combat.AntiFire;
+import tech.quilt.client.modules.impl.combat.AntiKnockback;
 import tech.quilt.client.modules.impl.combat.Aura;
+import tech.quilt.client.modules.impl.combat.Aura18;
+import tech.quilt.client.modules.impl.combat.AutoEat;
+import tech.quilt.client.modules.impl.combat.AutoGapple;
+import tech.quilt.client.modules.impl.combat.AutoHead;
+import tech.quilt.client.modules.impl.combat.AutoRod;
+import tech.quilt.client.modules.impl.combat.BlockHit;
+import tech.quilt.client.modules.impl.combat.FastBow;
+import tech.quilt.client.modules.impl.combat.FastPlace;
+import tech.quilt.client.modules.impl.combat.KeepSprint;
+import tech.quilt.client.modules.impl.combat.NoClickDelay;
+import tech.quilt.client.modules.impl.combat.NoFall;
+import tech.quilt.client.modules.impl.combat.SafeWalk;
+import tech.quilt.client.modules.impl.combat.Scaffold;
+import tech.quilt.client.modules.impl.combat.WTap;
 import tech.quilt.client.modules.impl.combat.AutoCrystal;
 import tech.quilt.client.modules.impl.combat.AutoSwap;
 import tech.quilt.client.modules.impl.combat.AutoTotem;
 import tech.quilt.client.modules.impl.combat.ClickPearl;
+import tech.quilt.client.modules.impl.combat.Criticals;
 import tech.quilt.client.modules.impl.combat.HitBox;
 import tech.quilt.client.modules.impl.combat.PacketCriticals;
+import tech.quilt.client.modules.impl.combat.SuperBow;
 import tech.quilt.client.modules.impl.combat.TriggerBot;
 import tech.quilt.client.modules.impl.combat.Velocity;
 import tech.quilt.client.modules.impl.misc.AHHelper;
@@ -39,22 +56,25 @@ import tech.quilt.client.modules.impl.misc.AnyDeskMonitor;
 import tech.quilt.client.modules.impl.misc.AutoAccept;
 import tech.quilt.client.modules.impl.misc.AutoDuel;
 import tech.quilt.client.modules.impl.misc.AutoRespawn;
+import tech.quilt.client.modules.impl.misc.FTHelper;
 import tech.quilt.client.modules.impl.misc.GriefJoiner;
+import tech.quilt.client.modules.impl.misc.HWHelper;
+import tech.quilt.client.modules.impl.misc.HealthResolver;
+import tech.quilt.client.modules.impl.misc.ItemScroller;
 import tech.quilt.client.modules.impl.misc.Joiner;
 import tech.quilt.client.modules.impl.misc.ClickAction;
 import tech.quilt.client.modules.impl.misc.ElytraHelper;
-import tech.quilt.client.modules.impl.misc.HealthResolver;
-import tech.quilt.client.modules.impl.misc.TapeMouse;
 import tech.quilt.client.modules.impl.misc.FreeCam;
-import tech.quilt.client.modules.impl.misc.HWHelper;
-import tech.quilt.client.modules.impl.misc.ItemScroller;
 import tech.quilt.client.modules.impl.misc.NameProtect;
 import tech.quilt.client.modules.impl.misc.NoInteract;
 import tech.quilt.client.modules.impl.misc.ScoreboardHealth;
+import tech.quilt.client.modules.impl.misc.ServerCrasher;
 import tech.quilt.client.modules.impl.misc.ServerHelper;
+import tech.quilt.client.modules.impl.misc.TapeMouse;
 import tech.quilt.client.modules.impl.movement.AirStuck;
 import tech.quilt.client.modules.impl.movement.AutoSprint;
 import tech.quilt.client.modules.impl.movement.ElytraResolver;
+import tech.quilt.client.modules.impl.movement.Timer;
 import tech.quilt.client.modules.impl.movement.ElytraSample;
 import tech.quilt.client.modules.impl.movement.ElytraTarget;
 import tech.quilt.client.modules.impl.movement.GrimGlide;
@@ -69,6 +89,7 @@ import tech.quilt.client.modules.impl.movement.GuiWalk;
 import tech.quilt.client.modules.impl.movement.Jesus;
 import tech.quilt.client.modules.impl.movement.NoSlow;
 import tech.quilt.client.modules.impl.movement.NoWeb;
+import tech.quilt.client.modules.impl.movement.RWSpeed;
 import tech.quilt.client.modules.impl.movement.Speed;
 import tech.quilt.client.modules.impl.movement.Strafe;
 import tech.quilt.client.modules.impl.movement.SuperFirework;
@@ -102,6 +123,11 @@ import tech.quilt.client.modules.impl.render.TargetESP;
 import tech.quilt.client.modules.impl.render.ViewModel;
 import tech.quilt.client.modules.impl.render.WorldTime;
 import tech.quilt.client.modules.impl.render.CameraClip;
+import tech.quilt.client.modules.impl.render.CustomModels;
+import tech.quilt.client.modules.impl.render.Cubes;
+import tech.quilt.client.modules.impl.render.RichiDog;
+import tech.quilt.client.modules.impl.render.Hands;
+import tech.quilt.client.modules.impl.render.ItemReplacer;
 import tech.quilt.client.screens.menu.MenuScreen;
 import tech.quilt.utility.component.RotationComponent;
 import tech.quilt.utility.game.player.rotation.Rotation;
@@ -116,6 +142,8 @@ public final class ModuleManager implements IMinecraft {
    private long lastKeyPressTime = 0;
    private int lastKeyCode = -1;
    private static final long DEBOUNCE_THRESHOLD_MS = 200;
+   private long lastAnimationUpdateTime = 0;
+   private static final long ANIMATION_UPDATE_INTERVAL_MS = 16;
 
    public ModuleManager() {
       init();
@@ -133,13 +161,31 @@ public final class ModuleManager implements IMinecraft {
     private void registerCombat() {
        registerModule(AntiBot.INSTANCE);
        registerModule(Aura.INSTANCE);
+       registerModule(Aura18.INSTANCE);
+       registerModule(AutoHead.INSTANCE);
+       registerModule(BlockHit.INSTANCE);
+       registerModule(KeepSprint.INSTANCE);
+       registerModule(NoClickDelay.INSTANCE);
+       registerModule(WTap.INSTANCE);
+       registerModule(AntiKnockback.INSTANCE);
+       registerModule(AntiFire.INSTANCE);
+       registerModule(AutoEat.INSTANCE);
+       registerModule(AutoGapple.INSTANCE);
+       registerModule(AutoRod.INSTANCE);
+       registerModule(FastBow.INSTANCE);
+       registerModule(FastPlace.INSTANCE);
+       registerModule(NoFall.INSTANCE);
+       registerModule(SafeWalk.INSTANCE);
+       registerModule(Scaffold.INSTANCE);
        registerModule(AutoCrystal.INSTANCE);
        registerModule(AutoSwap.INSTANCE);
        registerModule(AutoTotem.INSTANCE);
-       registerModule(ClickPearl.INSTANCE);
-       registerModule(HitBox.INSTANCE);
-       registerModule(PacketCriticals.INSTANCE);
-       registerModule(TriggerBot.INSTANCE);
+        registerModule(ClickPearl.INSTANCE);
+        registerModule(Criticals.INSTANCE);
+        registerModule(HitBox.INSTANCE);
+        registerModule(PacketCriticals.INSTANCE);
+        registerModule(SuperBow.INSTANCE);
+        registerModule(TriggerBot.INSTANCE);
        registerModule(Velocity.INSTANCE);
     }
 
@@ -154,6 +200,7 @@ public final class ModuleManager implements IMinecraft {
         registerModule(GuiWalk.INSTANCE);
         registerModule(Jesus.INSTANCE);
         registerModule(NoSlow.INSTANCE);
+        registerModule(RWSpeed.INSTANCE);
         registerModule(Speed.INSTANCE);
         registerModule(AirStuck.INSTANCE);
         registerModule(ElytraMotion.INSTANCE);
@@ -163,6 +210,7 @@ public final class ModuleManager implements IMinecraft {
         registerModule(SuperFirework.INSTANCE);
         registerModule(ElytraSample.INSTANCE);
         registerModule(Strafe.INSTANCE);
+        registerModule(Timer.INSTANCE);
         registerModule(VanillaSpeed.INSTANCE);
     }
 
@@ -185,6 +233,11 @@ public final class ModuleManager implements IMinecraft {
        registerModule(SeeInvisibles.INSTANCE);
         registerModule(CameraClip.INSTANCE);
         registerModule(Menu2Module.INSTANCE);
+        registerModule(CustomModels.INSTANCE);
+        registerModule(Cubes.INSTANCE);
+        registerModule(RichiDog.INSTANCE);
+        registerModule(Hands.INSTANCE);
+        registerModule(ItemReplacer.INSTANCE);
     }
 
     private void registerPlayer() {
@@ -216,8 +269,10 @@ public final class ModuleManager implements IMinecraft {
        registerModule(AutoDuel.INSTANCE);
        registerModule(AutoRespawn.INSTANCE);
        registerModule(NameProtect.INSTANCE);
-        registerModule(ScoreboardHealth.INSTANCE);
-         registerModule(AnyDeskMonitor.INSTANCE);
+       registerModule(FTHelper.INSTANCE);
+         registerModule(ScoreboardHealth.INSTANCE);
+         registerModule(ServerCrasher.INSTANCE);
+          registerModule(AnyDeskMonitor.INSTANCE);
          registerModule(GriefJoiner.INSTANCE);
          registerModule(Flight.INSTANCE);
          registerModule(HWHelper.INSTANCE);
@@ -258,9 +313,11 @@ public final class ModuleManager implements IMinecraft {
          lastKeyCode = keyCode;
          lastKeyPressTime = currentTime;
          
+         // Поиск модуля по keyCode
          for (Module module : modules) {
-            if (module.getKeyCode() == keyCode && module.getKeyCode() != -1) {
+            if (module.getKeyCode() == keyCode) {
                module.toggle();
+               break;
             }
          }
 
@@ -274,22 +331,34 @@ public final class ModuleManager implements IMinecraft {
 
    @EventTarget
    public void onRender(EventHudRender e) {
-      Quilt.getInstance().getThemeManager().getCurrentTheme().getAnimation().update(1.0F);
+      long currentTime = System.currentTimeMillis();
+      
+      // Обновляем анимации темы всегда
+      Quilt.getInstance().getThemeManager().getCurrentTheme().getAnimation().update(1.0F, currentTime);
+      
+      // Обновляем анимации модулей не чаще 60 FPS (каждые 16ms) для оптимизации производительности
+      if (currentTime - lastAnimationUpdateTime >= ANIMATION_UPDATE_INTERVAL_MS) {
+         lastAnimationUpdateTime = currentTime;
+         
+         for (Module module : modules) {
+            if (module.isEnabled()) {
+               module.getAnimation().update(true, currentTime);
 
-      for (Module module : modules) {
-         module.getAnimation().update(module.isEnabled());
-
-         for (Setting setting : module.getSettings()) {
-            if (setting instanceof BooleanSetting booleanSetting) {
-               booleanSetting.getAnimation().update(booleanSetting.isEnabled());
-            } else if (setting instanceof ModeSetting modeSetting) {
-               for (ModeSetting.Value value : modeSetting.getValues()) {
-                  value.getAnimation().update(value.isSelected());
+               for (Setting setting : module.getSettings()) {
+                  if (setting instanceof BooleanSetting booleanSetting) {
+                     booleanSetting.getAnimation().update(booleanSetting.isEnabled(), currentTime);
+                  } else if (setting instanceof ModeSetting modeSetting) {
+                     for (ModeSetting.Value value : modeSetting.getValues()) {
+                        value.getAnimation().update(value.isSelected(), currentTime);
+                     }
+                  } else if (setting instanceof MultiBooleanSetting multiBooleanSetting) {
+                     for (MultiBooleanSetting.Value value : multiBooleanSetting.getBooleanSettings()) {
+                        value.getAnimation().update(value.isEnabled(), currentTime);
+                     }
+                  }
                }
-            } else if (setting instanceof MultiBooleanSetting multiBooleanSetting) {
-               for (MultiBooleanSetting.Value value : multiBooleanSetting.getBooleanSettings()) {
-                  value.getAnimation().update(value.isEnabled());
-               }
+            } else {
+               module.getAnimation().update(false, currentTime);
             }
          }
       }

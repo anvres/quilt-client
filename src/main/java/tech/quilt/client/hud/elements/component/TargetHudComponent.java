@@ -14,7 +14,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -50,7 +49,6 @@ public class TargetHudComponent extends DraggableHudElement {
       this.toggleAnimationMetanoise = new Animation(1850L, Easing.CUBIC_OUT);
    }
 
-   @Native
    public void render(CustomDrawContext ctx) {
       LivingEntity target = findLookTarget();
       this.setTarget(target);
@@ -97,7 +95,6 @@ public class TargetHudComponent extends DraggableHudElement {
       return candidates.get(0);
    }
 
-   @Native
    private void renderTargetHud(CustomDrawContext ctx, LivingEntity target, float animation) {
       float posX = this.x;
       float posY = this.y;

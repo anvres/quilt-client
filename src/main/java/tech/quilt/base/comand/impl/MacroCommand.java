@@ -4,7 +4,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import java.util.Iterator;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.Formatting;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.comand.api.CommandAbstract;
 import tech.quilt.base.comand.impl.args.CommandArgumentType;
@@ -19,7 +18,6 @@ public class MacroCommand extends CommandAbstract {
       super("macro");
    }
 
-   @Native
    public void execute(LiteralArgumentBuilder<CommandSource> builder) {
       builder.then(literal("add").then(arg("bind", MacroArgumentType.create()).then(arg("text", CommandArgumentType.create()).executes((context) -> {
          String bind = (String)context.getArgument("bind", String.class);

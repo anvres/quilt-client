@@ -3,6 +3,7 @@ package tech.quilt.client.modules.api;
 import lombok.Generated;
 
 public enum Category {
+   COMBAT_1_8("1.8", "8"),
    COMBAT("Combat", "0"),
    MOVEMENT("Movement", "1"),
    PLAYER("Player", "2"),
@@ -30,6 +31,6 @@ public enum Category {
 
 
    private static Category[] $values() {
-      return new Category[]{COMBAT, MOVEMENT, PLAYER, RENDER, MISC, THEMES};
+      return new Category[]{COMBAT_1_8, COMBAT, MOVEMENT, PLAYER, RENDER, MISC, THEMES};
    }
 }

@@ -17,7 +17,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -45,7 +44,6 @@ public class StaffComponent extends DraggableHudElement {
       this.alpha = new Animation(200L, Easing.CUBIC_OUT);
    }
 
-   @Native
    public void render(CustomDrawContext ctx) {
       long currentTime = System.currentTimeMillis();
       if (currentTime - this.lastStaffUpdate > 50L && mc.getNetworkHandler() != null) {

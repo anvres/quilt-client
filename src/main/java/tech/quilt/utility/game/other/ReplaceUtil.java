@@ -10,10 +10,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextContent;
 import net.minecraft.text.PlainTextContent.Literal;
 import net.minecraft.util.Formatting;
-import ru.nexusguard.protection.annotations.Native;
 
 public class ReplaceUtil {
-   @Native
    public static Text replace(Text input, String target, String replacement) {
       if (input != null && target != null && replacement != null) {
          MutableText result = Text.empty().setStyle(input.getStyle());
@@ -24,7 +22,6 @@ public class ReplaceUtil {
       }
    }
 
-   @Native
    private static void appendReplaced(MutableText result, Text current, String target, String replacement) {
       TextContent content = current.getContent();
       Style style = current.getStyle();
@@ -44,7 +41,6 @@ public class ReplaceUtil {
 
    }
 
-   @Native
    public static Text replaceLiteral(Text input, String target, String replacement) {
       if (input == null) {
          return null;
@@ -69,7 +65,6 @@ public class ReplaceUtil {
       }
    }
 
-   @Native
    private static List<ReplaceUtil.StyledChar> flatten(Text text) {
       List<ReplaceUtil.StyledChar> list = new ArrayList();
       collect(text, list);
@@ -97,7 +92,6 @@ public class ReplaceUtil {
 
    }
 
-   @Native
    public static String replaceSymbols(String string) {
       String var10000 = string.replaceAll("ꔗ", String.valueOf(Formatting.BLUE) + "MODER").replaceAll("ꔥ", String.valueOf(Formatting.BLUE) + "ST.MODER").replaceAll("ꔡ", String.valueOf(Formatting.LIGHT_PURPLE) + "MODER+").replaceAll("ꔀ", String.valueOf(Formatting.GRAY) + "PLAYER").replaceAll("ꔉ", String.valueOf(Formatting.YELLOW) + "HELPER").replaceAll("◆", "@").replaceAll("┃", "|").replaceAll("ꔳ", String.valueOf(Formatting.AQUA) + "ML.ADMIN");
       String var10002 = String.valueOf(Formatting.RED);

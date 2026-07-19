@@ -3,7 +3,6 @@ package tech.quilt.base.macro;
 import com.google.common.reflect.TypeToken;
 import java.util.HashSet;
 import java.util.Set;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.filemanager.api.ManagerFileAbstract;
 
 public class MacroManager extends ManagerFileAbstract<Macro> {
@@ -12,7 +11,6 @@ public class MacroManager extends ManagerFileAbstract<Macro> {
       }).getType(), HashSet::new);
    }
 
-   @Native
    public boolean removeMacro(Macro macro) {
       return this.getItems().remove(macro);
    }

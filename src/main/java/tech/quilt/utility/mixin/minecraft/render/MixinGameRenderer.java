@@ -36,15 +36,21 @@ import tech.quilt.utility.render.level.Render3DUtil;
 
 @Mixin({GameRenderer.class})
 public abstract class MixinGameRenderer {
+   @Unique
+   private static CustomDrawContext cachedDrawContext;
+   @Unique
+   private static Matrix4f orthoMatrix = new Matrix4f();
+   @Unique
+   private static double lastCustomScale = -1;
    @Shadow
-   private float field_4005;
+   private float zoom;
    @Shadow
-   private float field_3988;
+   private float zoomX;
    @Shadow
-   private float field_4004;
+   private float zoomY;
 
    @Shadow
-   public abstract float method_32796();
+   public abstract float getFarPlaneDistance();
 
    @Inject(
       method = {"getBasicProjectionMatrix"},
@@ -56,12 +62,12 @@ public abstract class MixinGameRenderer {
       EventManager.call(eventAspectRatio);
       if (eventAspectRatio.isCancelled()) {
          Matrix4f matrix4f = new Matrix4f();
-         if (this.field_4005 != 1.0F) {
-            matrix4f.translate(this.field_3988, -this.field_4004, 0.0F);
-            matrix4f.scale(this.field_4005, this.field_4005, 1.0F);
+         if (this.zoom != 1.0F) {
+            matrix4f.translate(this.zoomX, -this.zoomY, 0.0F);
+            matrix4f.scale(this.zoom, this.zoom, 1.0F);
          }
 
-         matrix4f.perspective(fovDegrees * 0.017453292F, eventAspectRatio.getRatio(), 0.05F, this.method_32796());
+         matrix4f.perspective(fovDegrees * 0.017453292F, eventAspectRatio.getRatio(), 0.05F, this.getFarPlaneDistance());
          cir.setReturnValue(matrix4f);
       }
 
@@ -131,30 +137,50 @@ public abstract class MixinGameRenderer {
 
    @Unique
    private void triggerHudRenderEvent(RenderTickCounter tickCounter) {
-      CustomDrawContext customDrawContext = new CustomDrawContext(IMinecraft.mc.getBufferBuilders().getEntityVertexConsumers());
+      if (cachedDrawContext == null) {
+         cachedDrawContext = new CustomDrawContext(IMinecraft.mc.getBufferBuilders().getEntityVertexConsumers());
+      }
+      
+      double customScale = (double)Interface.INSTANCE.getCustomScale();
       double saveScale = MinecraftClient.getInstance().getWindow().getScaleFactor();
-      this.setScaleFactorOutAllMods((double)Interface.INSTANCE.getCustomScale());
-      RenderSystem.setProjectionMatrix((new Matrix4f()).setOrtho(0.0F, (float)IMinecraft.mc.getWindow().getScaledWidth(), (float)IMinecraft.mc.getWindow().getScaledHeight(), 0.0F, 1000.0F, 21000.0F), ProjectionType.ORTHOGRAPHIC);
+      
+      // Только обновляем scale если он изменился
+      if (customScale != lastCustomScale) {
+         lastCustomScale = customScale;
+         this.setScaleFactorOutAllMods(customScale);
+      }
+      
+      float width = (float)IMinecraft.mc.getWindow().getScaledWidth();
+      float height = (float)IMinecraft.mc.getWindow().getScaledHeight();
+      orthoMatrix.setOrtho(0.0F, width, height, 0.0F, 1000.0F, 21000.0F);
+      RenderSystem.setProjectionMatrix(orthoMatrix, ProjectionType.ORTHOGRAPHIC);
       RenderSystem.disableDepthTest();
 
       try {
-         EventManager.call(new EventHudRender(customDrawContext, tickCounter.getTickDelta(false)));
+         EventManager.call(new EventHudRender(cachedDrawContext, tickCounter.getTickDelta(false)));
       } catch (Exception var6) {
          var6.printStackTrace();
       }
 
-      customDrawContext.draw();
+      cachedDrawContext.draw();
       RenderSystem.enableDepthTest();
-      this.setScaleFactorOutAllMods(saveScale);
-      RenderSystem.setProjectionMatrix((new Matrix4f()).setOrtho(0.0F, (float)IMinecraft.mc.getWindow().getScaledWidth(), (float)IMinecraft.mc.getWindow().getScaledHeight(), 0.0F, 1000.0F, 21000.0F), ProjectionType.ORTHOGRAPHIC);
+      
+      // Восстанавливаем оригинальный scale
+      if (saveScale != lastCustomScale) {
+         this.setScaleFactorOutAllMods(saveScale);
+      }
+      RenderSystem.setProjectionMatrix(orthoMatrix, ProjectionType.ORTHOGRAPHIC);
    }
 
    @Unique
    public void setScaleFactorOutAllMods(double scaleFactor) {
+      if (IMinecraft.mc.getWindow().scaleFactor == scaleFactor) {
+         return;
+      }
       IMinecraft.mc.getWindow().scaleFactor = scaleFactor;
-      int i = (int)((double)IMinecraft.mc.getWindow().framebufferWidth / scaleFactor);
-      IMinecraft.mc.getWindow().scaledWidth = (double)IMinecraft.mc.getWindow().framebufferWidth / scaleFactor > (double)i ? i + 1 : i;
-      int j = (int)((double)IMinecraft.mc.getWindow().framebufferHeight / scaleFactor);
-      IMinecraft.mc.getWindow().scaledHeight = (double)IMinecraft.mc.getWindow().framebufferHeight / scaleFactor > (double)j ? j + 1 : j;
+      int framebufferWidth = IMinecraft.mc.getWindow().framebufferWidth;
+      int framebufferHeight = IMinecraft.mc.getWindow().framebufferHeight;
+      IMinecraft.mc.getWindow().scaledWidth = (int)Math.ceil((double)framebufferWidth / scaleFactor);
+      IMinecraft.mc.getWindow().scaledHeight = (int)Math.ceil((double)framebufferHeight / scaleFactor);
    }
 }

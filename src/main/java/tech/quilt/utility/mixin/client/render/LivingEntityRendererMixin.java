@@ -21,7 +21,7 @@ import tech.quilt.utility.interfaces.IMinecraft;
 public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> implements IMinecraft {
    @Shadow
    @Nullable
-   protected abstract RenderLayer method_24302(LivingEntityRenderState var1, boolean var2, boolean var3, boolean var4);
+   protected abstract RenderLayer getRenderLayer(LivingEntityRenderState var1, boolean var2, boolean var3, boolean var4);
 
    @Redirect(
       method = {"render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"},
@@ -39,7 +39,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
          }
       }
 
-      return this.method_24302(state, showBody, translucent, showOutline);
+      return this.getRenderLayer(state, showBody, translucent, showOutline);
    }
 
    @Redirect(

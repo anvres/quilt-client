@@ -11,7 +11,7 @@ import tech.quilt.client.modules.impl.render.WorldTime;
 @Mixin({Properties.class})
 public class ClientWorldPropertiesMixin {
    @Shadow
-   private long field_24439;
+   private long timeOfDay;
 
    @Inject(
       method = {"setTimeOfDay"},
@@ -21,7 +21,7 @@ public class ClientWorldPropertiesMixin {
    public void setTimeOfDayHook(long timeOfDay, CallbackInfo ci) {
       WorldTime tweaks = WorldTime.INSTANCE;
       if (tweaks.isEnabled()) {
-         this.field_24439 = (long)(tweaks.timeSetting.getCurrent() * 1000.0F);
+         this.timeOfDay = (long)(tweaks.timeSetting.getCurrent() * 1000.0F);
          ci.cancel();
       }
 

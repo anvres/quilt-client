@@ -1,7 +1,6 @@
 package tech.quilt.client.hud.elements.component;
 
 import net.minecraft.item.ItemStack;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -59,7 +58,6 @@ public class InventoryComponent extends DraggableHudElement {
       }
    }
 
-   @Native
    private void renderInventory(CustomDrawContext ctx, float animationValue) {
       if (mc.player == null) {
          Theme theme = Quilt.getInstance().getThemeManager().getCurrentTheme();

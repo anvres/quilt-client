@@ -3,7 +3,6 @@ package tech.quilt.base.discord;
 import java.io.IOException;
 import lombok.Generated;
 import net.minecraft.util.Identifier;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.discord.utils.DiscordEventHandlers;
 import tech.quilt.base.discord.utils.DiscordRPC;
@@ -21,7 +20,6 @@ public class DiscordManager {
       this.initRPC();
    }
 
-   @Native
    private void initRPC() {
       try {
          DiscordEventHandlers handlers = (new DiscordEventHandlers.Builder()).ready((user) -> {
@@ -38,7 +36,6 @@ public class DiscordManager {
 
    }
 
-   @Native
    public void stopRPC() {
       try {
          DiscordRPC.INSTANCE.Discord_Shutdown();
@@ -48,7 +45,6 @@ public class DiscordManager {
       this.running = false;
    }
 
-   @Native
    public void load() throws IOException {
       if (this.avatarId == null && !this.info.avatarUrl.isEmpty()) {
          this.avatarId = BufferUtil.registerDynamicTexture("avatar-", BufferUtil.getHeadFromURL(this.info.avatarUrl));
@@ -92,7 +88,6 @@ public class DiscordManager {
    }
 
    private class DiscordDaemonThread extends Thread {
-      @Native
       public void run() {
          this.setName("Discord-RPC");
 

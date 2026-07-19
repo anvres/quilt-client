@@ -9,7 +9,6 @@ import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.other.EventGameUpdate;
 import tech.quilt.base.events.impl.player.EventMove;
 import tech.quilt.base.events.impl.player.EventMoveInput;
@@ -59,7 +58,6 @@ public final class FreeCam extends Module {
    }
 
    @EventTarget
-   @Native
    public void onPacket(EventPacket e) {
       Packet<?> packet = e.getPacket();
       if (packet instanceof PlayerMoveC2SPacket) {

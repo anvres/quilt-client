@@ -9,7 +9,6 @@ import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.PlayerInput;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.input.EventKey;
 import tech.quilt.base.events.impl.other.EventTickMovement;
 import tech.quilt.client.modules.api.Category;
@@ -46,7 +45,6 @@ public final class ServerHelper extends Module {
    }
 
    @EventTarget
-   @Native
    private void onTick(EventTickMovement e) {
       if (this.useAntiFly) {
          this.useAntiFly = false;

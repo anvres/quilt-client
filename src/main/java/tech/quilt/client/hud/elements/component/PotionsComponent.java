@@ -12,7 +12,6 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -46,7 +45,6 @@ public class PotionsComponent extends DraggableHudElement {
       this.potionItems = new CopyOnWriteArrayList();
    }
 
-   @Native
    public void render(CustomDrawContext ctx) {
       if (mc.player != null) {
          this.updatePotions();
@@ -161,7 +159,6 @@ public class PotionsComponent extends DraggableHudElement {
       return Identifier.of("minecraft", "textures/mob_effect/" + id + ".png");
    }
 
-   @Native
    public void updatePotions() {
       if (mc.player != null) {
          Map<String, StatusEffectInstance> currentEffects = (Map)mc.player.getStatusEffects().stream().collect(Collectors.toMap((e) -> {

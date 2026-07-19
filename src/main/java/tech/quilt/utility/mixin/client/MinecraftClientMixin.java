@@ -27,10 +27,10 @@ public abstract class MinecraftClientMixin {
    private int accumulatedCalls = 0;
    @Shadow
    @Final
-   private Window field_1704;
+   private Window window;
 
    @Shadow
-   public abstract Window method_22683();
+   public abstract Window getWindow();
 
    @Inject(
       method = {"<init>"},

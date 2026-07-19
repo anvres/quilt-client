@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tech.quilt.base.events.impl.other.EventCloseScreen;
 import tech.quilt.base.events.impl.player.EventMotion;
 import tech.quilt.base.events.impl.player.EventMove;
+import tech.quilt.base.events.impl.player.EventPostMotion;
 import tech.quilt.base.events.impl.player.EventSlowWalking;
 import tech.quilt.base.events.impl.player.EventSprintUpdate;
 import tech.quilt.base.events.impl.player.EventUpdate;
@@ -34,29 +35,29 @@ import tech.quilt.client.modules.impl.player.NoPush;
 @Mixin({ClientPlayerEntity.class})
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
    @Shadow
-   private float field_3941;
+   private float lastYaw;
    @Shadow
    @Final
-   protected MinecraftClient field_3937;
+   protected MinecraftClient client;
    @Final
    @Shadow
-   public ClientPlayNetworkHandler field_3944;
+   public ClientPlayNetworkHandler networkHandler;
    @Shadow
-   private double field_3926;
+   private double lastX;
    @Shadow
-   private double field_3940;
+   private double lastBaseY;
    @Shadow
-   private double field_3924;
+   private double lastZ;
    @Shadow
-   private float field_3925;
+   private float lastPitch;
    @Shadow
-   private boolean field_3920;
+   private boolean lastOnGround;
    @Shadow
-   private boolean field_53040;
+   private boolean lastHorizontalCollision;
    @Shadow
-   private boolean field_3927;
+   private boolean autoJumpEnabled;
    @Shadow
-   private int field_3923;
+   private int ticksSinceLastPositionPacketSent;
    @Unique
    private final EventMotion event = new EventMotion(0.0F, 0.0F);
 
@@ -65,15 +66,15 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
    }
 
    @Shadow
-   protected abstract void method_46742();
+   protected abstract void sendSprintingPacket();
 
    @Shadow
-   protected boolean method_3134() {
+   protected boolean isCamera() {
       return false;
    }
 
    @Shadow
-   protected abstract void method_3148(float var1, float var2);
+   protected abstract void autoJump(float var1, float var2);
 
    @Inject(
       method = {"tick"},
@@ -94,7 +95,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
       EventSprintUpdate eventSprintUpdate = new EventSprintUpdate();
       EventManager.call(eventSprintUpdate);
       if (!eventSprintUpdate.isCancelled()) {
-         this.method_46742();
+         this.sendSprintingPacket();
       }
 
    }
@@ -135,7 +136,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
       cancellable = true
    )
    private void closeHandledScreenHook(CallbackInfo info) {
-      EventCloseScreen event = new EventCloseScreen(this.field_3937.currentScreen);
+      EventCloseScreen event = new EventCloseScreen(this.client.currentScreen);
       EventManager.call(event);
       if (event.isCancelled()) {
          info.cancel();
@@ -157,14 +158,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
       double d = this.getX();
       double e = this.getZ();
       super.move(movementType, event.getMovePos());
-      this.method_3148((float)(this.getX() - d), (float)(this.getZ() - e));
+      this.autoJump((float)(this.getX() - d), (float)(this.getZ() - e));
       ci.cancel();
    }
 
    @Overwrite
-   public void method_3136() {
-      this.method_46742();
-      if (this.method_3134()) {
+   public void sendMovementPackets() {
+      this.sendSprintingPacket();
+      if (this.isCamera()) {
          this.event.setYaw(this.getYaw());
          this.event.setPitch(this.getPitch());
          EventManager.call(this.event);
@@ -173,39 +174,40 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             return;
          }
 
-         double d = this.getX() - this.field_3926;
-         double e = this.getY() - this.field_3940;
-         double f = this.getZ() - this.field_3924;
-         double g = (double)(this.event.getYaw() - this.field_3941);
-         double h = (double)(this.event.getPitch() - this.field_3925);
-         ++this.field_3923;
-         boolean bl = MathHelper.squaredMagnitude(d, e, f) > MathHelper.square(2.0E-4D) || this.field_3923 >= 20;
+         double d = this.getX() - this.lastX;
+         double e = this.getY() - this.lastBaseY;
+         double f = this.getZ() - this.lastZ;
+         double g = (double)(this.event.getYaw() - this.lastYaw);
+         double h = (double)(this.event.getPitch() - this.lastPitch);
+         ++this.ticksSinceLastPositionPacketSent;
+         boolean bl = MathHelper.squaredMagnitude(d, e, f) > MathHelper.square(2.0E-4D) || this.ticksSinceLastPositionPacketSent >= 20;
          boolean bl2 = g != 0.0D || h != 0.0D;
          if (bl && bl2) {
-            this.field_3944.sendPacket(new Full(this.getX(), this.getY(), this.getZ(), this.event.getYaw(), this.event.getPitch(), this.isOnGround(), this.horizontalCollision));
+            this.networkHandler.sendPacket(new Full(this.getX(), this.getY(), this.getZ(), this.event.getYaw(), this.event.getPitch(), this.isOnGround(), this.horizontalCollision));
          } else if (bl) {
-            this.field_3944.sendPacket(new PositionAndOnGround(this.getX(), this.getY(), this.getZ(), this.isOnGround(), this.horizontalCollision));
+            this.networkHandler.sendPacket(new PositionAndOnGround(this.getX(), this.getY(), this.getZ(), this.isOnGround(), this.horizontalCollision));
          } else if (bl2) {
-            this.field_3944.sendPacket(new LookAndOnGround(this.event.getYaw(), this.event.getPitch(), this.isOnGround(), this.horizontalCollision));
-         } else if (this.field_3920 != this.isOnGround() || this.field_53040 != this.horizontalCollision) {
-            this.field_3944.sendPacket(new OnGroundOnly(this.isOnGround(), this.horizontalCollision));
+            this.networkHandler.sendPacket(new LookAndOnGround(this.event.getYaw(), this.event.getPitch(), this.isOnGround(), this.horizontalCollision));
+         } else if (this.lastOnGround != this.isOnGround() || this.lastHorizontalCollision != this.horizontalCollision) {
+            this.networkHandler.sendPacket(new OnGroundOnly(this.isOnGround(), this.horizontalCollision));
          }
 
          if (bl) {
-            this.field_3926 = this.getX();
-            this.field_3940 = this.getY();
-            this.field_3924 = this.getZ();
-            this.field_3923 = 0;
+            this.lastX = this.getX();
+            this.lastBaseY = this.getY();
+            this.lastZ = this.getZ();
+            this.ticksSinceLastPositionPacketSent = 0;
          }
 
          if (bl2) {
-            this.field_3941 = this.event.getYaw();
-            this.field_3925 = this.event.getPitch();
+            this.lastYaw = this.event.getYaw();
+            this.lastPitch = this.event.getPitch();
          }
 
-         this.field_3920 = this.isOnGround();
-         this.field_53040 = this.horizontalCollision;
-         this.field_3927 = (Boolean)this.field_3937.options.getAutoJump().getValue();
+         this.lastOnGround = this.isOnGround();
+         this.lastHorizontalCollision = this.horizontalCollision;
+         this.autoJumpEnabled = (Boolean)this.client.options.getAutoJump().getValue();
+         EventManager.call(new EventPostMotion());
       }
 
    }

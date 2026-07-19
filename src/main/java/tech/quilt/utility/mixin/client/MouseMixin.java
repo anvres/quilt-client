@@ -26,17 +26,17 @@ import tech.quilt.utility.interfaces.IMinecraft;
 public class MouseMixin {
    @Shadow
    @Final
-   private MinecraftClient field_1779;
+   private MinecraftClient client;
    @Shadow
-   private double field_1789;
+   private double cursorDeltaX;
    @Shadow
-   private double field_1787;
+   private double cursorDeltaY;
    @Shadow
-   private Smoother field_1793;
+   private Smoother cursorXSmoother;
    @Shadow
-   private Smoother field_1782;
+   private Smoother cursorYSmoother;
    @Shadow
-   private int field_1780;
+   private int activeButton;
 
    @Inject(
       method = {"onMouseButton"},
@@ -111,39 +111,39 @@ public class MouseMixin {
    )
    private void onUpdateMouse(double timeDelta, CallbackInfo ci) {
       try {
-         if (this.field_1779.player == null) {
+         if (this.client.player == null) {
             return;
          }
 
-         double sensitivity = (Double)this.field_1779.options.getMouseSensitivity().getValue() * 0.6D + 0.2D;
+         double sensitivity = (Double)this.client.options.getMouseSensitivity().getValue() * 0.6D + 0.2D;
          double scaled = sensitivity * sensitivity * sensitivity * 8.0D;
          double i;
          double j;
-         if (this.field_1779.options.smoothCameraEnabled) {
-            i = this.field_1793.smooth(this.field_1789 * scaled, timeDelta * scaled);
-            j = this.field_1782.smooth(this.field_1787 * scaled, timeDelta * scaled);
-         } else if (this.field_1779.options.getPerspective().isFirstPerson() && this.field_1779.player.isUsingSpyglass()) {
-            this.field_1793.clear();
-            this.field_1782.clear();
-            i = this.field_1789 * sensitivity * sensitivity * sensitivity;
-            j = this.field_1787 * sensitivity * sensitivity * sensitivity;
+         if (this.client.options.smoothCameraEnabled) {
+            i = this.cursorXSmoother.smooth(this.cursorDeltaX * scaled, timeDelta * scaled);
+            j = this.cursorYSmoother.smooth(this.cursorDeltaY * scaled, timeDelta * scaled);
+         } else if (this.client.options.getPerspective().isFirstPerson() && this.client.player.isUsingSpyglass()) {
+            this.cursorXSmoother.clear();
+            this.cursorYSmoother.clear();
+            i = this.cursorDeltaX * sensitivity * sensitivity * sensitivity;
+            j = this.cursorDeltaY * sensitivity * sensitivity * sensitivity;
          } else {
-            this.field_1793.clear();
-            this.field_1782.clear();
-            i = this.field_1789 * scaled;
-            j = this.field_1787 * scaled;
+            this.cursorXSmoother.clear();
+            this.cursorYSmoother.clear();
+            i = this.cursorDeltaX * scaled;
+            j = this.cursorDeltaY * scaled;
          }
 
-         int invert = (Boolean)this.field_1779.options.getInvertYMouse().getValue() ? -1 : 1;
+         int invert = (Boolean)this.client.options.getInvertYMouse().getValue() ? -1 : 1;
          EventLook event = new EventLook(i, j * (double)invert);
          EventManager.call(event);
          if (!event.isCancelled()) {
-            this.field_1779.getTutorialManager().onUpdateMouse(event.getYaw(), event.getPitch());
-            this.field_1779.player.changeLookDirection(event.getYaw(), event.getPitch());
+            this.client.getTutorialManager().onUpdateMouse(event.getYaw(), event.getPitch());
+            this.client.player.changeLookDirection(event.getYaw(), event.getPitch());
          }
 
-         this.field_1789 = 0.0D;
-         this.field_1787 = 0.0D;
+         this.cursorDeltaX = 0.0D;
+         this.cursorDeltaY = 0.0D;
          ci.cancel();
       } catch (Exception var14) {
       }

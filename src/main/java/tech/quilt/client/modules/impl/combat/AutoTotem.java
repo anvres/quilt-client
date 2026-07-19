@@ -16,7 +16,6 @@ import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Hand;
 import net.minecraft.util.PlayerInput;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.base.events.impl.server.EventPacket;
 import tech.quilt.client.modules.api.Category;
@@ -62,7 +61,6 @@ public final class AutoTotem extends Module {
    }
 
    @EventTarget
-   @Native
    public void onPlayerTick(EventUpdate event) {
       if (mc.player != null && mc.world != null) {
          if (this.cooldownTicks > 0) {
@@ -130,7 +128,6 @@ public final class AutoTotem extends Module {
    }
 
    @EventTarget
-   @Native
    private void onPacket(EventPacket e) {
       if (e.isSent()) {
       }
@@ -149,13 +146,11 @@ public final class AutoTotem extends Module {
 
    }
 
-   @Native
    private void swapToOffhand(Slot slot) {
       PlayerInventoryUtil.swapHand(slot, Hand.OFF_HAND, false);
       PlayerInventoryUtil.closeScreen(true);
    }
 
-   @Native
    private boolean shouldUseTotem() {
       if (!mc.player.isInCreativeMode() && !mc.player.isSpectator()) {
          float healthValue = mc.player.getHealth() + mc.player.getAbsorptionAmount();

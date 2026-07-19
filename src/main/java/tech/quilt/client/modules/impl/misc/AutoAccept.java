@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.events.impl.server.EventPacket;
 import tech.quilt.client.modules.api.Category;
@@ -26,7 +25,6 @@ public final class AutoAccept extends Module {
    }
 
    @EventTarget
-   @Native
    public void onPacket(EventPacket event) {
       if (mc.player != null && mc.world != null) {
          if (event.isReceive()) {

@@ -32,10 +32,10 @@ public abstract class HandledScreenMixin {
    private Slot lowAllSumSlotId = null;
    @Shadow
    @Final
-   protected ScreenHandler field_2797;
+   protected ScreenHandler handler;
 
    @Shadow
-   public abstract ScreenHandler method_17577();
+   public abstract ScreenHandler getScreenHandler();
 
    @Inject(
       method = {"tick"},
@@ -43,7 +43,7 @@ public abstract class HandledScreenMixin {
    )
    private void tickScreen(CallbackInfo ci) {
       if (!this.isAuc && AHHelper.INSTANCE.isEnabled()) {
-         this.isAuc = AutoBuyUtil.isAuction(this.field_2797);
+         this.isAuc = AutoBuyUtil.isAuction(this.handler);
       }
 
       if (this.isAuc && AHHelper.INSTANCE.isEnabled()) {
@@ -51,7 +51,7 @@ public abstract class HandledScreenMixin {
          int allSum = Integer.MAX_VALUE;
 
          for(int i = 0; i < 44; ++i) {
-            Slot slot = (Slot)this.method_17577().slots.get(i);
+            Slot slot = (Slot)this.getScreenHandler().slots.get(i);
             if (!slot.getStack().isEmpty()) {
                int sum = AutoBuyUtil.getPrice(slot.getStack());
                if (sum < lowSum) {
@@ -85,10 +85,10 @@ public abstract class HandledScreenMixin {
    }
 
    @Shadow
-   protected abstract boolean method_2387(Slot var1, double var2, double var4);
+   protected abstract boolean isPointOverSlot(Slot var1, double var2, double var4);
 
    @Shadow
-   protected abstract void method_2383(Slot var1, int var2, int var3, SlotActionType var4);
+   protected abstract void onMouseClick(Slot var1, int var2, int var3, SlotActionType var4);
 
    @Unique
    private boolean attack() {
@@ -108,8 +108,8 @@ public abstract class HandledScreenMixin {
       if (MinecraftClient.getInstance().player != null) {
          for(int i1 = 0; i1 < MinecraftClient.getInstance().player.currentScreenHandler.slots.size(); ++i1) {
             Slot slot = (Slot)MinecraftClient.getInstance().player.currentScreenHandler.slots.get(i1);
-            if (this.method_2387(slot, (double)mouseX, (double)mouseY) && slot.isEnabled() && ItemScroller.INSTANCE.isEnabled() && this.shit() && this.attack() && !slot.getStack().isEmpty()) {
-               this.method_2383(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
+            if (this.isPointOverSlot(slot, (double)mouseX, (double)mouseY) && slot.isEnabled() && ItemScroller.INSTANCE.isEnabled() && this.shit() && this.attack() && !slot.getStack().isEmpty()) {
+               this.onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
             }
          }
 

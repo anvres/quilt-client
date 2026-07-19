@@ -4,7 +4,6 @@ import com.darkmagician6.eventapi.EventTarget;
 import net.minecraft.block.Block;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -23,7 +22,6 @@ public final class AutoTool extends Module {
    }
 
    @EventTarget
-   @Native
    public void onUpdate(EventUpdate event) {
       if (mc.player != null && mc.world != null && mc.interactionManager != null && !mc.player.isCreative()) {
          if (mc.interactionManager.isBreakingBlock() && this.previousSlot == -1) {

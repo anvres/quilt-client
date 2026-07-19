@@ -22,7 +22,7 @@ public abstract class FireworkRocketEntityMixin extends ProjectileEntity {
    @Unique
    private Vec3d rotation;
    @Shadow
-   private LivingEntity field_7616;
+   private LivingEntity shooter;
 
    public FireworkRocketEntityMixin(EntityType<? extends ProjectileEntity> entityType, World world) {
       super(entityType, world);

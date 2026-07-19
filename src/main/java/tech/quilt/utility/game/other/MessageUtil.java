@@ -5,18 +5,15 @@ import lombok.Generated;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.utility.interfaces.IMinecraft;
 import tech.quilt.utility.render.display.base.color.ColorRGBA;
 import tech.quilt.utility.render.display.base.color.ColorUtil;
 
 public final class MessageUtil implements IMinecraft {
-   @Native
    public static void displayMessage(MessageUtil.LogLevel level, Object message) {
    }
 
-   @Native
    private static Text createGradientText(Object text, ColorRGBA color1, ColorRGBA color2) {
       Text result = Text.empty();
       int length = String.valueOf(text).length();

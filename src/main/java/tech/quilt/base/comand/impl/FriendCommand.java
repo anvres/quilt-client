@@ -3,7 +3,6 @@ package tech.quilt.base.comand.impl;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.Formatting;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.comand.api.CommandAbstract;
 import tech.quilt.base.comand.impl.args.FriendArgumentType;
@@ -15,7 +14,6 @@ public class FriendCommand extends CommandAbstract {
       super("friend");
    }
 
-   @Native
    public void execute(LiteralArgumentBuilder<CommandSource> builder) {
       builder.then(literal("add").then(arg("player", PlayerArgumentType.create()).executes((context) -> {
          String name = (String)context.getArgument("player", String.class);

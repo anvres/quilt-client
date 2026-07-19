@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ScoreboarMixin {
    @Shadow
    @Nullable
-   public abstract Team method_1164(String var1);
+   public abstract Team getScoreHolderTeam(String var1);
 
    @Inject(
       method = {"removeScoreHolderFromTeam"},
@@ -21,7 +21,7 @@ public abstract class ScoreboarMixin {
       cancellable = true
    )
    public void remove(String scoreHolderName, Team team, CallbackInfo ci) {
-      if (this.method_1164(scoreHolderName) != team) {
+      if (this.getScoreHolderTeam(scoreHolderName) != team) {
          ci.cancel();
       }
 

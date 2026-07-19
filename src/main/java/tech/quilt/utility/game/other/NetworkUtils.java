@@ -3,13 +3,11 @@ package tech.quilt.utility.game.other;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.packet.Packet;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.utility.interfaces.IMinecraft;
 
 public class NetworkUtils implements IMinecraft {
    private static final List<Packet<?>> silentPackets = new ArrayList();
 
-   @Native
    public static void sendSilentPacket(Packet<?> packet) {
       silentPackets.add(packet);
       mc.getNetworkHandler().sendPacket(packet);

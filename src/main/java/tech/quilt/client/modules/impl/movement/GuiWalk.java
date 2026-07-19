@@ -3,7 +3,6 @@ package tech.quilt.client.modules.impl.movement;
 import com.darkmagician6.eventapi.EventTarget;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.base.events.impl.server.EventPacket;
 import tech.quilt.client.modules.api.Category;
@@ -29,7 +28,6 @@ public final class GuiWalk extends Module {
    }
 
    @EventTarget
-   @Native
    private void onPacket(EventPacket e) {
    }
 

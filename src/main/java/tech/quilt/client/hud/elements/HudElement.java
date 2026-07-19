@@ -2,7 +2,6 @@ package tech.quilt.client.hud.elements;
 
 import java.util.function.Supplier;
 import lombok.Generated;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.font.Font;
 import tech.quilt.base.font.Fonts;
@@ -25,7 +24,6 @@ public class HudElement {
       this.width += font.width(this.icon) + iconTextSpacing + textWidth;
    }
 
-   @Native
    public void drawContent(CustomDrawContext ctx, float blockX, float blockY, float blockHeight, float iconSize, float iconTextSpacing, ColorRGBA iconColor, ColorRGBA textColor, Font font) {
       Font iconFont = Fonts.ICONS.getFont(6.0F);
       float var10000 = blockY + (blockHeight - iconFont.height()) / 2.0F;

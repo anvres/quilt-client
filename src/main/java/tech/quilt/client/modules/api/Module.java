@@ -22,6 +22,7 @@ public class Module implements IClient, Comparable<Module> {
    private int keyCode;
    private Animation animation;
    private Animation descAnimation;
+   private List<Setting> cachedSettings = null;
 
    protected Module() {
       this.animation = new Animation(250L, Easing.CUBIC_OUT);
@@ -62,19 +63,22 @@ public class Module implements IClient, Comparable<Module> {
    }
 
    public List<Setting> getSettings() {
-      return Arrays.stream(this.getClass().getDeclaredFields()).map((field) -> {
-         try {
-            field.setAccessible(true);
-            return field.get(this);
-         } catch (IllegalAccessException var3) {
-            var3.printStackTrace();
-            return null;
-         }
-      }).filter((field) -> {
-         return field instanceof Setting;
-      }).map((field) -> {
-         return (Setting)field;
-      }).collect(Collectors.toList());
+      if (cachedSettings == null) {
+         cachedSettings = Arrays.stream(this.getClass().getDeclaredFields()).map((field) -> {
+            try {
+               field.setAccessible(true);
+               return field.get(this);
+            } catch (IllegalAccessException var3) {
+               var3.printStackTrace();
+               return null;
+            }
+         }).filter((field) -> {
+            return field instanceof Setting;
+         }).map((field) -> {
+            return (Setting)field;
+         }).collect(Collectors.toList());
+      }
+      return cachedSettings;
    }
 
    public JsonObject save() {

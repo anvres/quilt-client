@@ -5,7 +5,6 @@ import com.darkmagician6.eventapi.EventTarget;
 import lombok.Generated;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventMoveInput;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.utility.game.player.MovingUtil;
@@ -73,7 +72,6 @@ public class RotationComponent implements IClient {
    }
 
    @EventTarget
-   @Native
    public void onEventTick(EventUpdate event) {
       if (this.currentTask().equals(RotationComponent.RotationTask.AIM) && this.idleTicks() > this.currentTimeout()) {
          this.currentTask(RotationComponent.RotationTask.RESET);
@@ -86,7 +84,6 @@ public class RotationComponent implements IClient {
       ++this.idleTicks;
    }
 
-   @Native
    public static Vec2f applySensitivityPatch(Vec2f rotation, Vec2f previousRotation) {
       double sens = (Double)mc.options.getMouseSensitivity().getValue();
       double gcd = Math.pow(sens * 0.6000000238418579D + 0.20000000298023224D, 3.0D) * 8.0D;
@@ -126,7 +123,6 @@ public class RotationComponent implements IClient {
       update(targetRotation, yawSpeed, pitchSpeed, returnSpeed, returnSpeed, timeout, priority, false);
    }
 
-   @Native
    private boolean updateRotation(Rotation rotation, float turnYawSpeed, float turnPitchSpeed) {
       if (mc.player == null) {
          return false;
@@ -146,7 +142,6 @@ public class RotationComponent implements IClient {
       }
    }
 
-   @Native
    public void stopRotation() {
       this.currentTask(RotationComponent.RotationTask.IDLE);
       this.currentPriority(0);

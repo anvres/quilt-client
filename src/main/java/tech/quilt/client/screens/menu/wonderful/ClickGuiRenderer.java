@@ -110,7 +110,7 @@ public class ClickGuiRenderer {
         float headerStartX = panelX + (ClickGuiLayout.WIDTH / 2.0f) - (totalHeaderW / 2.0f);
 
         float iconOffsetX = 0.0f;
-        if (category == Category.PLAYER || category == Category.MISC || category == Category.THEMES) {
+        if (category == Category.PLAYER || category == Category.MISC || category == Category.THEMES || category == Category.COMBAT_1_8) {
             iconOffsetX = 2.0f;
         }
 

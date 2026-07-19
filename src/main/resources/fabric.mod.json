@@ -28,6 +28,11 @@
   "license": "LGPLv3",
   "icon": "icon.png",
   "environment": "client",
+  "entrypoints": {
+    "client": [
+      "tech.quilt.Quilt"
+    ]
+  },
   "custom": {
     "modmenu": {
       "parent": {
@@ -46,7 +51,8 @@
   },
   "accessWidener": "sodium-extra.accesswidener",
   "mixins": [
-    "sodium-extra.mixins.json"
+    "sodium-extra.mixins.json",
+    "quilt.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16",

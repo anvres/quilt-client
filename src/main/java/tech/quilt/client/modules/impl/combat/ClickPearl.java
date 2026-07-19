@@ -3,7 +3,6 @@ package tech.quilt.client.modules.impl.combat;
 import com.darkmagician6.eventapi.EventTarget;
 import lombok.Generated;
 import net.minecraft.item.Items;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.other.EventTickMovement;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -28,7 +27,6 @@ public final class ClickPearl extends Module {
    }
 
    @EventTarget
-   @Native
    private void onTick(EventTickMovement e) {
       if (this.use) {
          this.setIgnore(true);

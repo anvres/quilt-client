@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import lombok.Generated;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.utility.crypt.CryptUtility;
 
@@ -40,7 +39,6 @@ public class ConfigManager {
       }, 5L, 5L, TimeUnit.MINUTES);
    }
 
-   @Native
    public boolean loadConfig(String configName) {
       if (configName == null) {
          return false;
@@ -82,7 +80,6 @@ public class ConfigManager {
       }
    }
 
-   @Native
    public boolean saveConfig(String configName) {
       try {
          if (configName == null) {
@@ -110,7 +107,6 @@ public class ConfigManager {
       }
    }
 
-   @Native
    public Config findConfig(String configName) {
       if (configName == null) {
          return null;
@@ -119,7 +115,6 @@ public class ConfigManager {
       }
    }
 
-   @Native
    public List<String> configNames() {
       File[] files = configDirectory.listFiles();
       List<String> names = new ArrayList();
@@ -134,7 +129,6 @@ public class ConfigManager {
       return names;
    }
 
-   @Native
    public boolean deleteConfig(String configName) {
       if (configName == null) {
          return false;
@@ -149,7 +143,6 @@ public class ConfigManager {
       }
    }
 
-   @Native
    public void save() {
       this.scheduler.shutdown();
       this.saveConfig("current_config");

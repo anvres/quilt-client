@@ -5,7 +5,6 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.PositionAndOnGround;
 import net.minecraft.util.math.BlockPos;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.comand.api.CommandAbstract;
 import tech.quilt.base.comand.impl.args.CoordinateArgumentType;
 import tech.quilt.utility.game.other.MessageUtil;
@@ -15,7 +14,6 @@ public class ClipCommand extends CommandAbstract {
       super("vclip");
    }
 
-   @Native
    public void execute(LiteralArgumentBuilder<CommandSource> builder) {
       builder.then(literal("up").executes((context) -> {
          double yOffset = this.findOffset(mc.player.getBlockPos(), true);

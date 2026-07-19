@@ -5,7 +5,9 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.world.GameMode;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -19,13 +21,19 @@ import tech.quilt.utility.render.display.base.CustomDrawContext;
 
 @Mixin({InGameHud.class})
 public abstract class InGameHudMixin {
+   @Unique
+   private static CustomDrawContext cachedDrawContext2D;
+   @Unique
+   private static Matrix4f orthoMatrix2D = new Matrix4f();
    @Inject(
       method = {"render"},
       at = {@At("HEAD")}
    )
    public void onRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-      CustomDrawContext customDrawContext = new CustomDrawContext(IMinecraft.mc.getBufferBuilders().getEntityVertexConsumers());
-      EventManager.call(new EventRender2D(customDrawContext, tickCounter.getTickDelta(false)));
+      if (cachedDrawContext2D == null) {
+         cachedDrawContext2D = new CustomDrawContext(IMinecraft.mc.getBufferBuilders().getEntityVertexConsumers());
+      }
+      EventManager.call(new EventRender2D(cachedDrawContext2D, tickCounter.getTickDelta(false)));
    }
 
    @Inject(

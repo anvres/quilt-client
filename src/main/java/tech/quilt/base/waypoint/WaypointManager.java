@@ -5,7 +5,6 @@ import com.darkmagician6.eventapi.EventTarget;
 import lombok.Generated;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.events.impl.render.EventHudRender;
 import tech.quilt.base.font.Fonts;
@@ -20,12 +19,10 @@ public class WaypointManager implements IClient {
       EventManager.register(this);
    }
 
-   @Native
    public void set(Waypoint waypoint) {
       this.activeWaypoint = waypoint;
    }
 
-   @Native
    public void remove(Waypoint waypoint) {
       if (this.activeWaypoint != null && this.activeWaypoint.equals(waypoint)) {
          this.activeWaypoint = null;
@@ -33,7 +30,6 @@ public class WaypointManager implements IClient {
 
    }
 
-   @Native
    public void clear() {
       this.activeWaypoint = null;
    }
@@ -42,12 +38,10 @@ public class WaypointManager implements IClient {
       return this.activeWaypoint == null;
    }
 
-   @Native
    public void setPlayerWaypoint(Waypoint waypoint) {
       this.activePlayerWaypoint = waypoint;
    }
 
-   @Native
    public void removePlayerWaypoint(Waypoint waypoint) {
       if (this.activePlayerWaypoint != null && this.activeWaypoint.equals(waypoint)) {
          this.activePlayerWaypoint = null;
@@ -55,7 +49,6 @@ public class WaypointManager implements IClient {
 
    }
 
-   @Native
    public void clearPlayerWaypoint() {
       this.activePlayerWaypoint = null;
    }

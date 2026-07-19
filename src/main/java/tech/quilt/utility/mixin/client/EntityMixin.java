@@ -1,13 +1,16 @@
 package tech.quilt.utility.mixin.client;
 
+import com.darkmagician6.eventapi.EventManager;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import tech.quilt.base.events.impl.player.EventOnMovePost;
 import tech.quilt.client.modules.impl.player.NoPush;
 
 @Mixin({Entity.class})
@@ -45,5 +48,17 @@ public class EntityMixin {
          cir.setReturnValue(false);
       }
 
+   }
+
+   @Inject(
+      method = {"updateVelocity"},
+      at = {@At("TAIL")}
+   )
+   private void onUpdateVelocity(float speed, Vec3d movementInput, CallbackInfo ci) {
+      Entity me = (Entity)(Object)this;
+      if (MinecraftClient.getInstance().player != null && me.getId() == MinecraftClient.getInstance().player.getId()) {
+         EventOnMovePost event = new EventOnMovePost(speed, movementInput);
+         EventManager.call(event);
+      }
    }
 }

@@ -4,7 +4,6 @@ import com.darkmagician6.eventapi.EventTarget;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.SlotActionType;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -26,7 +25,6 @@ public final class AutoArmor extends Module implements IMinecraft {
    }
 
    @EventTarget
-   @Native
    public void onUpdate(EventUpdate event) {
       if (mc.player != null && mc.world != null) {
          if (!this.isMoving()) {

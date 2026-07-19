@@ -4,7 +4,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
 import tech.quilt.client.modules.api.Category;
@@ -42,7 +41,6 @@ public class MenuScreen extends Screen implements IClient {
         this.needToClose = false;
     }
 
-    @Native
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.updateAnimations();
         float progress = this.openAnimation.getValue();
@@ -87,7 +85,6 @@ public class MenuScreen extends Screen implements IClient {
                 || super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
-    @Native
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256) {
             this.needToClose = true;

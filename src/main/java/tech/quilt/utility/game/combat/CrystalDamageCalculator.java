@@ -13,14 +13,12 @@ import net.minecraft.util.hit.HitResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.RaycastContext.ShapeType;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.utility.game.player.RaytracingUtil;
 import tech.quilt.utility.interfaces.IClient;
 
 public final class CrystalDamageCalculator implements IClient {
    private static final float CRYSTAL_EXPLOSION_POWER = 6.0F;
 
-   @Native
    public static float calculateCrystalDamage(EndCrystalEntity crystal, PlayerEntity player, boolean checkBlocks) {
       if (crystal != null && !crystal.isRemoved()) {
          if (player != null && mc.world != null) {
@@ -43,7 +41,6 @@ public final class CrystalDamageCalculator implements IClient {
       }
    }
 
-   @Native
    public static float getMaxPotentialDamage(List<EndCrystalEntity> crystals, PlayerEntity player, boolean checkBlocks) {
       if (crystals != null && !crystals.isEmpty()) {
          if (player == null) {
@@ -67,7 +64,6 @@ public final class CrystalDamageCalculator implements IClient {
       }
    }
 
-   @Native
    private static float getProtectionFactor(PlayerEntity player) {
       if (player == null) {
          return 0.0F;
@@ -86,7 +82,6 @@ public final class CrystalDamageCalculator implements IClient {
       }
    }
 
-   @Native
    private static float calculateRawExplosionDamage(Vec3d explosionPos, Vec3d targetPos, float explosionPower) {
       double distance = explosionPos.distanceTo(targetPos);
       double impact = 1.0D - distance / ((double)explosionPower * 2.0D);

@@ -3,7 +3,6 @@ package tech.quilt.client.modules.impl.misc;
 import com.darkmagician6.eventapi.EventTarget;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.server.EventPacket;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -21,7 +20,6 @@ public final class AutoAuth extends Module {
    }
 
    @EventTarget
-   @Native
    public void onReceive(EventPacket event) {
       if (event.isReceive()) {
          Packet var3 = event.getPacket();

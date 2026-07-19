@@ -3,7 +3,6 @@ package tech.quilt.utility.game.other.render;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.utility.game.other.MouseButton;
 import tech.quilt.utility.interfaces.IMinecraft;
 import tech.quilt.utility.render.display.base.UIContext;
@@ -15,7 +14,6 @@ public abstract class CustomScreen extends Screen implements IMinecraft {
 
    public abstract void render(UIContext var1, float var2, float var3);
 
-   @Native
    public final void render(DrawContext context, int mouseX, int mouseY, float delta) {
       UIContext uiContext = UIContext.of(context, mouseX, mouseY, delta);
       this.render(uiContext, (float)mouseX, (float)mouseY);

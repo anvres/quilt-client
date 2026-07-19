@@ -3,7 +3,6 @@ package tech.quilt.base.filemanager.impl;
 import com.google.common.reflect.TypeToken;
 import java.util.HashSet;
 import java.util.Set;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.filemanager.api.ManagerFileAbstract;
 
 public class FriendManager extends ManagerFileAbstract<String> {
@@ -16,7 +15,6 @@ public class FriendManager extends ManagerFileAbstract<String> {
       return this.getItems().contains(name);
    }
 
-   @Native
    public boolean removeFriend(String name) {
       return this.getItems().remove(name);
    }

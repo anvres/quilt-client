@@ -4,7 +4,6 @@ import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.EventTarget;
 import java.util.Locale;
 import net.minecraft.client.gui.screen.ChatScreen;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -38,7 +37,6 @@ public class InformationComponent extends DraggableHudElement {
 
    }
 
-   @Native
    public void render(CustomDrawContext ctx) {
       Theme theme = Quilt.getInstance().getThemeManager().getCurrentTheme();
       if (mc.currentScreen instanceof ChatScreen) {

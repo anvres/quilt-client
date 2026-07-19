@@ -18,7 +18,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -139,7 +138,6 @@ public class TargetESP extends Module {
       }
    }
 
-   @Native
    private void updateRotation() {
       if (!this.isReversing) {
          this.rotationSpeed += 0.01F;

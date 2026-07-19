@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Generated;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.utility.render.display.base.color.ColorRGBA;
 import tech.quilt.utility.render.display.base.color.ColorUtil;
 
@@ -17,7 +16,6 @@ public class ThemeManager {
       this.initThemes();
    }
 
-   @Native
    private void initThemes() {
       if (this.currentTheme == null) {
          this.currentTheme = this.defaultTheme;

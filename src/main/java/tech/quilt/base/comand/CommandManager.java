@@ -8,7 +8,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandSource;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.comand.api.CommandAbstract;
 import tech.quilt.base.comand.impl.BotCommand;
 import tech.quilt.base.comand.impl.ClipCommand;
@@ -29,7 +28,6 @@ public class CommandManager {
       this.register();
    }
 
-   @Native
    private void register() {
       this.registerCommand(new FriendCommand());
       this.registerCommand(new MacroCommand());
@@ -41,7 +39,6 @@ public class CommandManager {
       this.registerCommand(new BotCommand());
    }
 
-   @Native
    public void registerCommand(CommandAbstract command) {
       if (command != null) {
          command.register(this.dispatcher);

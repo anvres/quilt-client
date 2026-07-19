@@ -5,7 +5,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.events.impl.input.EventKey;
 import tech.quilt.client.modules.api.Category;
@@ -23,7 +22,6 @@ public final class ClickAction extends Module {
    public static final ClickAction INSTANCE = new ClickAction();
 
    @EventTarget
-   @Native
    public void onKey(EventKey e) {
       if (e.isKeyDown(this.friendBind.getKeyCode())) {
          HitResult var4 = mc.crosshairTarget;

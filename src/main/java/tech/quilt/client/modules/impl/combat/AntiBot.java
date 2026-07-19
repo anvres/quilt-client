@@ -8,7 +8,6 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -29,7 +28,6 @@ public final class AntiBot extends Module {
    }
 
    @EventTarget
-   @Native
    public void onTick(EventUpdate event) {
       if (mc.player != null && mc.world != null) {
          if (this.timer.finished(10000L) && !this.bots.isEmpty()) {

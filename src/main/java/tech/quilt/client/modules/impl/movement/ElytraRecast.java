@@ -5,7 +5,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.events.impl.player.EventMoveInput;
 import tech.quilt.client.modules.api.Category;
@@ -25,7 +24,6 @@ public final class ElytraRecast extends Module {
    private boolean changed = false;
 
    @EventTarget
-   @Native
    public void update(EventMoveInput eventUpdate) {
       if (mc.player.isUsingItem()) {
          if (Quilt.getInstance().getServerHandler().isServerSprint()) {

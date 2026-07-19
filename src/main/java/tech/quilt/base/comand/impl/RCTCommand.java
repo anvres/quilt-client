@@ -5,7 +5,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.comand.api.CommandAbstract;
 import tech.quilt.base.notify.NotifyManager;
@@ -20,7 +19,6 @@ public class RCTCommand extends CommandAbstract implements IClient {
       super("rct");
    }
 
-   @Native
    public void execute(LiteralArgumentBuilder<CommandSource> builder) {
       builder.executes((context) -> {
          ServerHandler serverHandler = Quilt.getInstance().getServerHandler();

@@ -24,23 +24,23 @@ import tech.quilt.utility.mixin.accessors.CameraAccessor;
 @Mixin({Camera.class})
 public abstract class CameraMixin {
    @Shadow
-   private Vec3d field_18712;
+   private Vec3d pos;
    @Shadow
    @Final
-   private Mutable field_18713;
+   private Mutable blockPos;
    @Shadow
-   private float field_18718;
+   private float yaw;
    @Shadow
-   private float field_18717;
+   private float pitch;
 
    @Shadow
-   protected abstract void method_19325(float var1, float var2);
+   protected abstract void setRotation(float var1, float var2);
 
    @Shadow
-   protected abstract void method_19324(float var1, float var2, float var3);
+   protected abstract void moveBy(float var1, float var2, float var3);
 
    @Shadow
-   protected abstract float method_19318(float var1);
+   protected abstract float clipToSpace(float var1);
 
    @Inject(
       method = {"update"},
@@ -52,17 +52,17 @@ public abstract class CameraMixin {
       cancellable = true
    )
    private void updateHook(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {
-      EventCamera event = new EventCamera(false, 4.0F, new Rotation(this.field_18718, this.field_18717));
+      EventCamera event = new EventCamera(false, 4.0F, new Rotation(this.yaw, this.pitch));
       EventManager.call(event);
-      Rotation angle = new Rotation(this.field_18718, this.field_18717);
+      Rotation angle = new Rotation(this.yaw, this.pitch);
       if (event.isCancelled() && focusedEntity instanceof ClientPlayerEntity) {
          ClientPlayerEntity player = (ClientPlayerEntity)focusedEntity;
          if (!player.isSleeping() && thirdPerson) {
             float pitch = angle.getPitch();
             float yaw = angle.getYaw();
             float distance = event.getDistance();
-            this.method_19325(yaw, pitch);
-            this.method_19324(event.isCameraClip() ? -distance : -this.method_19318(distance), 0.0F, 0.0F);
+            this.setRotation(yaw, pitch);
+            this.moveBy(event.isCameraClip() ? -distance : -this.clipToSpace(distance), 0.0F, 0.0F);
             ci.cancel();
          }
       }
@@ -77,8 +77,8 @@ public abstract class CameraMixin {
    private void posHook(Vec3d pos, CallbackInfo ci) {
       EventCameraPosition event = new EventCameraPosition(pos);
       EventManager.call(event);
-      this.field_18712 = pos = event.getPos();
-      this.field_18713.set(pos.x, pos.y, pos.z);
+      this.pos = pos = event.getPos();
+      this.blockPos.set(pos.x, pos.y, pos.z);
       ci.cancel();
    }
 

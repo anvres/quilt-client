@@ -17,9 +17,11 @@
     "minecraft.text.TextVisitFactoryMixin"
   ],
   "client": [
-    "accessors.CameraAccessor",
-    "accessors.DrawContextAccessor",
-    "accessors.HandledScreenAccessor",
+     "accessors.CameraAccessor",
+     "accessors.DrawContextAccessor",
+     "accessors.MinecraftClientAccessor",
+     "accessors.RenderTickCounterDynamicAccessor",
+     "accessors.HandledScreenAccessor",
     "accessors.InGameHudAccessor",
     "accessors.ShaderProgramAccessor",
     "client.BackGroundRendererMixin",
@@ -45,7 +47,8 @@
     "minecraft.render.ClientWorldPropertiesMixin",
     "minecraft.render.FeatureRendererMixin",
     "minecraft.render.MixinGameRenderer",
-    "minecraft.render.PlayerEntityRendererMixin"
+    "minecraft.render.PlayerEntityRendererMixin",
+    "client.render.ItemRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

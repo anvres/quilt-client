@@ -3,7 +3,6 @@ package tech.quilt.client.modules.impl.player;
 import com.darkmagician6.eventapi.EventTarget;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -23,7 +22,6 @@ public final class FastBreak extends Module {
    }
 
    @EventTarget
-   @Native
    public void onUpdate(EventUpdate event) {
       if (mc.player != null) {
          if (this.speedMine.isEnabled()) {

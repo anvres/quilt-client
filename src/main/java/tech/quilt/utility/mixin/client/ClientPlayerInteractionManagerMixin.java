@@ -30,7 +30,7 @@ import tech.quilt.client.modules.impl.misc.NoInteract;
 @Mixin({ClientPlayerInteractionManager.class})
 public abstract class ClientPlayerInteractionManagerMixin {
    @Shadow
-   public abstract ActionResult method_2905(PlayerEntity var1, Entity var2, Hand var3);
+   public abstract ActionResult interactEntity(PlayerEntity var1, Entity var2, Hand var3);
 
    @Inject(
       method = {"attackEntity"},

@@ -21,18 +21,18 @@ import tech.quilt.Quilt;
 public abstract class ChatInputSuggestorMixin {
    @Final
    @Shadow
-   TextFieldWidget field_21599;
+   TextFieldWidget textField;
    @Shadow
-   boolean field_21614;
+   boolean completingSuggestions;
    @Shadow
-   private ParseResults<CommandSource> field_21610;
+   private ParseResults<CommandSource> parse;
    @Shadow
-   private CompletableFuture<Suggestions> field_21611;
+   private CompletableFuture<Suggestions> pendingSuggestions;
    @Shadow
-   private SuggestionWindow field_21612;
+   private SuggestionWindow window;
 
    @Shadow
-   protected abstract void method_23937();
+   protected abstract void showCommandSuggestions();
 
    @Inject(
       method = {"refresh"},
@@ -48,16 +48,16 @@ public abstract class ChatInputSuggestorMixin {
        if (Quilt.getInstance().isUnhooked()) return;
        if (reader.canRead(Quilt.getInstance().getCommandManager().getPrefix().length()) && reader.getString().startsWith(Quilt.getInstance().getCommandManager().getPrefix(), reader.getCursor())) {
          reader.setCursor(reader.getCursor() + 1);
-         if (this.field_21610 == null) {
-            this.field_21610 = Quilt.getInstance().getCommandManager().getDispatcher().parse(reader, Quilt.getInstance().getCommandManager().getSource());
+         if (this.parse == null) {
+            this.parse = Quilt.getInstance().getCommandManager().getDispatcher().parse(reader, Quilt.getInstance().getCommandManager().getSource());
          }
 
-         int cursor = this.field_21599.getCursor();
-         if (cursor >= 1 && (this.field_21612 == null || !this.field_21614)) {
-            this.field_21611 = Quilt.getInstance().getCommandManager().getDispatcher().getCompletionSuggestions(this.field_21610, cursor);
-            this.field_21611.thenRun(() -> {
-               if (this.field_21611.isDone()) {
-                  this.method_23937();
+         int cursor = this.textField.getCursor();
+         if (cursor >= 1 && (this.window == null || !this.completingSuggestions)) {
+            this.pendingSuggestions = Quilt.getInstance().getCommandManager().getDispatcher().getCompletionSuggestions(this.parse, cursor);
+            this.pendingSuggestions.thenRun(() -> {
+               if (this.pendingSuggestions.isDone()) {
+                  this.showCommandSuggestions();
                }
 
             });

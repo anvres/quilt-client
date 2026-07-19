@@ -3,7 +3,6 @@ package tech.quilt.client.modules.impl.movement;
 import com.darkmagician6.eventapi.EventTarget;
 import java.util.Objects;
 import net.minecraft.util.Hand;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventSlowWalking;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.client.modules.api.Category;
@@ -36,7 +35,6 @@ public final class NoSlow extends Module {
    }
 
    @EventTarget
-   @Native
    public void onItemUse(EventSlowWalking e) {
       if (this.grimNew.isSelected() && mc.player.getItemUseTime() % 2 == 0) {
          e.setCancelled(true);

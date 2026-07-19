@@ -10,7 +10,6 @@ import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.base.events.impl.server.EventPacket;
@@ -34,7 +33,6 @@ public class RCTRepository implements IClient {
    }
 
    @EventTarget
-   @Native
    public void onPacket(EventPacket e) {
       if (this.anarchy != 0) {
          Packet var3 = e.getPacket();
@@ -55,7 +53,6 @@ public class RCTRepository implements IClient {
    }
 
    @EventTarget
-   @Native
    public void onTick(EventUpdate e) {
       if (this.anarchy != 0) {
          ServerHandler serverHandler = Quilt.getInstance().getServerHandler();
@@ -98,7 +95,6 @@ public class RCTRepository implements IClient {
       }
    }
 
-   @Native
    public void reconnect(int anarchy) {
       if (anarchy > 0 && anarchy < 64) {
          this.anarchy = anarchy;

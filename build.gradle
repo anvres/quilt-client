@@ -64,3 +64,4 @@ remapJar {
     inputFile = tasks.shadowJar.archiveFile
     addNestedDependencies = true
 }
+

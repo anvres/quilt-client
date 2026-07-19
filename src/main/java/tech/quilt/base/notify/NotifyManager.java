@@ -12,7 +12,6 @@ import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket;
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.text.Text;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.other.EventModuleToggle;
 import tech.quilt.base.events.impl.player.EventPickupItem;
 import tech.quilt.base.events.impl.player.EventUpdate;
@@ -88,7 +87,6 @@ public class NotifyManager {
    }
 
    @EventTarget
-   @Native
    private void onPacket(EventPacket e) {
       if (this.notifyComponent != null && MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().world != null) {
          Packet var3;
@@ -147,7 +145,6 @@ public class NotifyManager {
    }
 
    @EventTarget
-   @Native
    private void onPickup(EventPickupItem e) {
       if (this.notifyComponent != null && MinecraftClient.getInstance().player != null && MinecraftClient.getInstance().world != null) {
          if (e.getEntity() == MinecraftClient.getInstance().player && (!e.getItemStack().getName().getSiblings().isEmpty() || e.getItemStack().getItem() == Items.ELYTRA)) {
@@ -157,7 +154,6 @@ public class NotifyManager {
    }
 
    @EventTarget
-   @Native
    public void onModuleToggle(EventModuleToggle event) {
       if (this.notifyComponent != null) {
          this.notifyComponent.addNotification(event.getModule(), event.isEnabled());

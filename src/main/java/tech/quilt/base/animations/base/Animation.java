@@ -29,8 +29,16 @@ public class Animation {
       this.update(bool ? 1.0F : 0.0F);
    }
 
+   public void update(boolean bool, long currentTime) {
+      this.update(bool ? 1.0F : 0.0F, currentTime);
+   }
+
    public float update(float newValue) {
       long currentTime = System.currentTimeMillis();
+      return this.update(newValue, currentTime);
+   }
+
+   public float update(float newValue, long currentTime) {
       if (newValue != this.targetValue) {
          this.startValue = this.value;
          this.targetValue = newValue;

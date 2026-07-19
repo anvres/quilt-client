@@ -9,7 +9,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.Formatting;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.comand.api.CommandAbstract;
 import tech.quilt.utility.game.other.MessageUtil;
 
@@ -25,7 +24,6 @@ public class BotCommand extends CommandAbstract {
         super("bot");
     }
     
-    @Native
     @Override
     public void execute(LiteralArgumentBuilder<CommandSource> builder) {
         // .bot connect <name> <ip> [port]

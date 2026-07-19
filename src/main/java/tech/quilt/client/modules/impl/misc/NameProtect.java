@@ -2,7 +2,6 @@ package tech.quilt.client.modules.impl.misc;
 
 import java.util.Collection;
 import java.util.Iterator;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -21,13 +20,11 @@ public final class NameProtect extends Module {
    private NameProtect() {
    }
 
-   @Native
    public static String getCustomName() {
       Module module = INSTANCE;
       return module != null && module.isEnabled() ? "QUILT" : mc.player.getNameForScoreboard();
    }
 
-   @Native
    public static String getCustomName(String originalName) {
       Module module = INSTANCE;
       if (module != null && module.isEnabled() && mc.player != null) {

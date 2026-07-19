@@ -2,7 +2,6 @@ package tech.quilt.client.modules.impl.movement;
 
 import com.darkmagician6.eventapi.EventTarget;
 import net.minecraft.entity.LivingEntity;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.player.EventUpdate;
 import tech.quilt.client.modules.api.Category;
 import tech.quilt.client.modules.api.Module;
@@ -19,7 +18,6 @@ public class ElytraMotion extends Module {
    private boolean waitTarget;
 
    @EventTarget
-   @Native
    private void onPlayerTick(EventUpdate e) {
       if (mc.player != null) {
          LivingEntity target = Aura.INSTANCE.getTarget();

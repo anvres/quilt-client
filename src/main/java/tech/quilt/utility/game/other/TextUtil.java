@@ -6,7 +6,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.utility.interfaces.IMinecraft;
 
 public final class TextUtil implements IMinecraft {
@@ -14,7 +13,6 @@ public final class TextUtil implements IMinecraft {
       return String.format(Locale.US, "%.1f", number);
    }
 
-   @Native
    public static Text truncateAfterSecondSpace(Text input, boolean addEllipsis) {
       OrderedText ordered = input.asOrderedText();
       MutableText out = Text.empty();
@@ -90,7 +88,6 @@ public final class TextUtil implements IMinecraft {
       }
    }
 
-   @Native
    private static void flushRun(MutableText out, StringBuilder run, Style style) {
       if (run.length() != 0) {
          MutableText chunk = Text.literal(run.toString());
@@ -103,7 +100,6 @@ public final class TextUtil implements IMinecraft {
       }
    }
 
-   @Native
    public static Text truncateAfterSubstring(Text input, String argStr, boolean addEllipsis) {
       if (argStr != null && !argStr.isEmpty()) {
          OrderedText ordered = input.asOrderedText();

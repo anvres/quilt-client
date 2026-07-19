@@ -13,7 +13,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.profiler.Profilers;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -45,7 +44,6 @@ public class HootBarComponent extends DraggableHudElement {
 
    }
 
-   @Native
    public void render(CustomDrawContext ctx) {
       this.x = ((float)ctx.getScaledWindowWidth() - this.width) / 2.0F;
       float posX = this.getX();

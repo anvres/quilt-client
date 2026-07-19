@@ -7,7 +7,6 @@ import java.util.List;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.animations.base.Animation;
 import tech.quilt.base.animations.base.Easing;
@@ -43,7 +42,6 @@ public class NotifyComponent extends DraggableHudElement {
       this.notifications.addLast(new NotifyComponent.TotemNotification(name, enchanted));
    }
 
-   @Native
    public void render(CustomDrawContext ctx) {
       Iterator<NotifyComponent.BaseNotification> iterator = this.notifications.iterator();
       this.toggleAnimation.update(mc.currentScreen instanceof ChatScreen && this.notifications.isEmpty());
@@ -127,7 +125,6 @@ public class NotifyComponent extends DraggableHudElement {
          this.enabled = enabled;
       }
 
-      @Native
       void render(CustomDrawContext ctx, float x, float y, Font textFont, Theme theme, float notificationHeight, NotifyComponent parent) {
          if (this.timestamp == 0L) {
             this.timestamp = System.currentTimeMillis();

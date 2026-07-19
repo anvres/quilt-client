@@ -18,7 +18,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.Quilt;
 import tech.quilt.base.events.impl.other.EventGameUpdate;
 import tech.quilt.base.events.impl.other.EventTick;
@@ -168,7 +167,6 @@ public final class Aura extends Module {
     }
     
 
-    @Native
     private void breakShieldAndAttack() {
         boolean wasSwapped = false;
         boolean wasSwappedInventory = false;
@@ -271,7 +269,6 @@ public final class Aura extends Module {
     }
 
     @EventTarget
-    @Native
     public void onTickMovement(EventTickMovement e) {
         if (this.target != null) {
             if (this.target.isBlocking() && this.hurtTimer.finished(200L)) {
@@ -282,7 +279,6 @@ public final class Aura extends Module {
     }
 
     @EventTarget
-    @Native
     public void eventRotate(EventGameUpdate e) {
         if (this.target != null) {
             Quilt.getInstance().getModuleManager().setAcceleration(0.0F);

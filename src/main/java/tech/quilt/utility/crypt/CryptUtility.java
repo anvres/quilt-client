@@ -11,10 +11,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.Generated;
-import ru.nexusguard.protection.annotations.Native;
 
 public final class CryptUtility {
-   @Native
    public static byte[] decryptData(byte[] encryptedData, String password) {
       try {
          if (encryptedData.length < 32) {
@@ -37,7 +35,6 @@ public final class CryptUtility {
       }
    }
 
-   @Native
    public static byte[] encryptData(byte[] data, String password) throws Exception {
       try {
          SecureRandom random = new SecureRandom();

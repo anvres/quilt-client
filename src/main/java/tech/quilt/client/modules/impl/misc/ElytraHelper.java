@@ -14,7 +14,6 @@ import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.PlayerInput;
-import ru.nexusguard.protection.annotations.Native;
 import tech.quilt.base.events.impl.input.EventKey;
 import tech.quilt.base.events.impl.other.EventTick;
 import tech.quilt.base.events.impl.other.EventTickMovement;
@@ -50,7 +49,6 @@ public final class ElytraHelper extends Module {
    }
 
    @EventTarget
-   @Native
    private void onTick(EventTick e) {
       if (this.swap) {
          int slotHotbar;
@@ -151,7 +149,6 @@ public final class ElytraHelper extends Module {
    }
 
    @EventTarget
-   @Native
    private void onTickMovement(EventTickMovement e) {
       if (this.useFirework) {
          if (this.mode.is("Хвх")) {

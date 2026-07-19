@@ -19,7 +19,7 @@ import tech.quilt.base.events.impl.player.EventMoveInput;
 public abstract class KeyboardInputMixin extends Input {
    @Shadow
    @Final
-   private GameOptions field_3902;
+   private GameOptions settings;
 
    @Unique
    private float abobaGetMovementMultiplier(boolean positive, boolean negative) {
@@ -46,7 +46,7 @@ public abstract class KeyboardInputMixin extends Input {
       if (!event.isCancelled()) {
          this.movementForward = event.getForward();
          this.movementSideways = event.getStrafe();
-         this.playerInput = new PlayerInput(this.movementForward > 0.0F, this.movementForward < 0.0F, this.movementSideways > 0.0F, this.movementSideways < 0.0F, this.field_3902.jumpKey.isPressed(), this.field_3902.sneakKey.isPressed(), this.field_3902.sprintKey.isPressed());
+         this.playerInput = new PlayerInput(this.movementForward > 0.0F, this.movementForward < 0.0F, this.movementSideways > 0.0F, this.movementSideways < 0.0F, this.settings.jumpKey.isPressed(), this.settings.sneakKey.isPressed(), this.settings.sprintKey.isPressed());
          ci.cancel();
       }
    }
