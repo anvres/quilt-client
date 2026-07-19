@@ -78,8 +78,6 @@ public final class EntityESP extends Module {
    @Override
    public void onEnable() {
       super.onEnable();
-      cachedFont6_5 = Fonts.REGULAR.getFont(6.5F);
-      cachedFont6 = Fonts.REGULAR.getFont(6.0F);
    }
 
    @Override
@@ -88,9 +86,24 @@ public final class EntityESP extends Module {
       positions.clear();
    }
 
+   private void ensureFontsLoaded() {
+      try {
+         if (cachedFont6_5 == null) {
+            cachedFont6_5 = Fonts.REGULAR.getFont(6.5F);
+         }
+         if (cachedFont6 == null) {
+            cachedFont6 = Fonts.REGULAR.getFont(6.0F);
+         }
+      } catch (Exception e) {
+         // Font loading failed, will retry next frame
+      }
+   }
+
    @EventTarget
    private void onRender(EventRender2D e) {
       if (mc.world == null || mc.player == null) return;
+      
+      ensureFontsLoaded();
       
       float tickDelta = e.getTickDelta();
       renderPlayerTags(tickDelta, e);

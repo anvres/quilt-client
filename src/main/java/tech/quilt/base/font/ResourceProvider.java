@@ -12,7 +12,7 @@ import tech.quilt.Quilt;
 import tech.quilt.utility.interfaces.IMinecraft;
 
 public final class ResourceProvider implements IMinecraft {
-   private static final ResourceManager RESOURCE_MANAGER;
+   private static ResourceManager RESOURCE_MANAGER;
    private static final Gson GSON;
 
    public static Identifier getShaderIdentifier(String name) {
@@ -29,6 +29,9 @@ public final class ResourceProvider implements IMinecraft {
 
    public static String toString(Identifier identifier, String delimiter) {
       try {
+         if (RESOURCE_MANAGER == null) {
+            RESOURCE_MANAGER = mc.getResourceManager();
+         }
          InputStream inputStream = RESOURCE_MANAGER.open(identifier);
 
          String var4;
@@ -71,7 +74,10 @@ public final class ResourceProvider implements IMinecraft {
    }
 
    static {
-      RESOURCE_MANAGER = mc.getResourceManager();
       GSON = new Gson();
+   }
+
+   public static void resetResourceManager() {
+      RESOURCE_MANAGER = null;
    }
 }
