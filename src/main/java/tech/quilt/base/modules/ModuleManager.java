@@ -127,6 +127,7 @@ import tech.quilt.client.modules.impl.render.CustomModels;
 import tech.quilt.client.modules.impl.render.Cubes;
 import tech.quilt.client.modules.impl.render.RichiDog;
 import tech.quilt.client.modules.impl.render.Hands;
+import tech.quilt.client.modules.impl.render.ItemReplacer;
 import tech.quilt.client.screens.menu.MenuScreen;
 import tech.quilt.utility.component.RotationComponent;
 import tech.quilt.utility.game.player.rotation.Rotation;
@@ -236,6 +237,7 @@ public final class ModuleManager implements IMinecraft {
         registerModule(Cubes.INSTANCE);
         registerModule(RichiDog.INSTANCE);
         registerModule(Hands.INSTANCE);
+        registerModule(ItemReplacer.INSTANCE);
     }
 
     private void registerPlayer() {

@@ -26,6 +26,7 @@
     "client.CameraMixin",
     "client.ChatInputSuggestorMixin",
     "client.render.HeldItemRendererMixin",
+    "client.render.ItemRendererMixin",
     "client.ClientPlayerEntityMixin",
     "client.ClientPlayerInteractionManagerMixin",
     "client.HandledScreenMixin",
